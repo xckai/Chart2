@@ -1,0 +1,20 @@
+{
+  "name": "chart",
+  "version": "2.0.0",
+  "description": "chart version 2",
+  "scripts": {
+    "start": "tsc && concurrently \"npm run tsc:w\" \"npm run lite\"",
+    "lite": "lite-server",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
+  },
+  "author": "xckai",
+  "license": "Free",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "lite-server": "^2.2.0",
+    "concurrently": "^2.0.0"
+  }
+}
