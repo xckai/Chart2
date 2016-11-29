@@ -1,6 +1,6 @@
- class Test {
-    str;
-    constructor(str){
+class Test {
+    private str;
+    constructor( str:number){
         this.str=str;
     };
     getStr(){

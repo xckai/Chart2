@@ -1,13 +1,6 @@
-define(["require", "exports", "test"], function (require, exports, test_1) {
+define(["require", "exports", "test", "underscore"], function (require, exports, test_1) {
     "use strict";
-    require.config({
-        path: {
-            "require": "",
-            "exports": "",
-            "backbone": "backbone"
-        }
-    });
-    var t = new test_1.Test("a");
+    var t = new test_1.Test(_([2, 3]).size());
     document.body.innerHTML = t.getStr();
 });
 //# sourceMappingURL=main.js.map
