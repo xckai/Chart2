@@ -18,7 +18,7 @@ var requirejs, require, define;
         currDirRegExp = /^\.\//,
         op = Object.prototype,
         ostring = op.toString,
-        hasOwn = op.hasOwnProperty,
+        hasOwn = op.hasOwnProperty, 
         isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),
         isWebWorker = !isBrowser && typeof importScripts !== 'undefined',
         //PS3 indicates loaded and complete, but need to wait for complete
