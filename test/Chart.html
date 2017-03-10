@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit basic example</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
+  <script  src="../lib/require.js"></script>
+
+
+
+
+ 
+</body>
+    <script >
+        requirejs.config({
+        //By default load any module IDs from js/lib
+                    baseUrl: '../',
+                });
+            require(['chart/CompareChart'],function(c){
+                 var a= new c.CompareChart({title:{
+            value:"haha",
+            class:"title",
+            visiable:true
+        }});
+                 a.calculateLayout();
+                //console.log(c);
+            });
+    </script>
+<style>
+   .rotate{
+         transform: rotate(-45deg);
+     }
+</style>
+</html>
