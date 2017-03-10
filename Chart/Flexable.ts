@@ -106,12 +106,12 @@ function connectContainerAndScrollbar(scroll: any, sbw: number, sbLenght: number
         scrollBarSplitterOffset = (offset + _offset) * sbLenght / elementLength;
         setOffset();
     })
-    return Flexable;
+    return ;
 
 
 }
 
-function formatTranslate(str) {
+function formatTranslate(str:string) {
     let translate = /.*translate\([^a-z]*\)/.exec(str);
     if (translate) {
         if (translate[0].match(/-?\d+/g)) {
@@ -133,43 +133,45 @@ function getTranslate(element) {
     return formatTranslate(transform);
 }
 
-function flexableContainer(cw, ch, scrollWidth, ew, eh, element) {
+function flexableContainer(cw:number, ch:number, scrollWidth:number, ew:number, eh:number, element:any) {
     if (ew > cw || eh > ch) {
         let translateStr = Service.stringTemplate("translate({x},{y})")
         let parentNode = element.node().parentNode;
         let elementNode = element.node();
         let container = d3.select(parentNode).append("g").classed("flexable-container", true);
         var clipId = _.uniqueId('clip');
-        let elementContainer = container.append("g");
+        let elementContainer = container.append("g").classed("flexable-elementContainer",true);
+        let moveAbleContainer = elementContainer.append("g").classed("flexable-element",true)
         let xscrollOffset = ew > cw ? scrollWidth : 0;
         let yscrollOffset = eh > ch ? scrollWidth : 0;
         parentNode.removeChild(elementNode);
-        elementContainer.node().appendChild(elementNode);
-
-
+        moveAbleContainer.node().appendChild(elementNode);
+        
+        elementContainer.append("defs").append("clipPath")
+                        .attr("id", clipId)
+                        .append("rect")
+                        .attr("x",0)
+                        .attr("y",0)
+                        .attr("width", cw-yscrollOffset)
+                        .attr("height",ch-xscrollOffset);
+        elementContainer.attr("clip-path","url(#"+clipId+")");
         if (ew > cw) {
             let scrollBarContainer = container.append("g").attr("transform", () => Service.d3Transform().translate(0, ch).rotate(-90)());
-            connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw, ew + xscrollOffset, 0, (obj) => {
-                elementContainer.attr("transform", Service.d3Transform().translate(-obj.offset, getTranslate(elementContainer)[1])())
+            connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw -xscrollOffset, ew + xscrollOffset, 0, (obj) => {
+                let translate=getTranslate(moveAbleContainer);
+                moveAbleContainer.attr("transform", Service.d3Transform().translate(-obj.offset, translate[1])())
             })
         }
         if (eh > ch) {
             let scrollBarContainer = container.append("g").attr("transform", () => Service.d3Transform().translate(cw - scrollWidth, 0)());
             connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw - yscrollOffset, ew + yscrollOffset, 0, (obj) => {
-                elementContainer.attr("transform", Service.d3Transform().translate(getTranslate(elementContainer)[0], -obj.offset)())
+                let translate=getTranslate(moveAbleContainer);
+                moveAbleContainer.attr("transform", Service.d3Transform().translate(translate[0], -obj.offset)())
             })
         }
-
-
     }
 }
 
-class Flexable extends BaseClass {
-    static connectContainerAndScrollbar = connectContainerAndScrollbar;
-    static flexableContainer = flexableContainer;
-    static formatTranslate = formatTranslate;
-
-}
 export {
-    Flexable
+    flexableContainer,formatTranslate,connectContainerAndScrollbar
 };

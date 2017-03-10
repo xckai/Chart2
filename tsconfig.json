@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "amd",
+    "module": "umd",
     "sourceMap": true
   },
-  "exclude": []
+  "exclude": [
+    "./node_modules/*"
+  ]
 }

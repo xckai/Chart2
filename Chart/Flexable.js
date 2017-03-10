@@ -1,10 +1,16 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-define(["require", "exports", "lib/d3", "Chart/Service", "lib/underscore"], function (require, exports, d3, Service_1) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lib/underscore", "lib/d3", "Chart/Service"], factory);
+    }
+})(function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var d3 = require("lib/d3");
+    var Service_1 = require("Chart/Service");
     function rectGen(x, y, w, h, r, tl, tr, bl, br) {
         // x: x-coordinate
         // y: y-coordinate
@@ -106,8 +112,9 @@ define(["require", "exports", "lib/d3", "Chart/Service", "lib/underscore"], func
             scrollBarSplitterOffset = (offset + _offset) * sbLenght / elementLength;
             setOffset();
         });
-        return Flexable;
+        return;
     }
+    exports.connectContainerAndScrollbar = connectContainerAndScrollbar;
     function formatTranslate(str) {
         var translate = /.*translate\([^a-z]*\)/.exec(str);
         if (translate) {
@@ -127,6 +134,7 @@ define(["require", "exports", "lib/d3", "Chart/Service", "lib/underscore"], func
             return ["0", "0"];
         }
     }
+    exports.formatTranslate = formatTranslate;
     function getTranslate(element) {
         var transform = element.attr("transform");
         return formatTranslate(transform);
@@ -138,35 +146,36 @@ define(["require", "exports", "lib/d3", "Chart/Service", "lib/underscore"], func
             var elementNode = element.node();
             var container = d3.select(parentNode).append("g").classed("flexable-container", true);
             var clipId = _.uniqueId('clip');
-            var elementContainer_1 = container.append("g");
+            var elementContainer = container.append("g").classed("flexable-elementContainer", true);
+            var moveAbleContainer_1 = elementContainer.append("g").classed("flexable-element", true);
             var xscrollOffset = ew > cw ? scrollWidth : 0;
             var yscrollOffset = eh > ch ? scrollWidth : 0;
             parentNode.removeChild(elementNode);
-            elementContainer_1.node().appendChild(elementNode);
+            moveAbleContainer_1.node().appendChild(elementNode);
+            elementContainer.append("defs").append("clipPath")
+                .attr("id", clipId)
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", cw - yscrollOffset)
+                .attr("height", ch - xscrollOffset);
+            elementContainer.attr("clip-path", "url(#" + clipId + ")");
             if (ew > cw) {
                 var scrollBarContainer = container.append("g").attr("transform", function () { return Service_1.Service.d3Transform().translate(0, ch).rotate(-90)(); });
-                connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw, ew + xscrollOffset, 0, function (obj) {
-                    elementContainer_1.attr("transform", Service_1.Service.d3Transform().translate(-obj.offset, getTranslate(elementContainer_1)[1])());
+                connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw - xscrollOffset, ew + xscrollOffset, 0, function (obj) {
+                    var translate = getTranslate(moveAbleContainer_1);
+                    moveAbleContainer_1.attr("transform", Service_1.Service.d3Transform().translate(-obj.offset, translate[1])());
                 });
             }
             if (eh > ch) {
                 var scrollBarContainer = container.append("g").attr("transform", function () { return Service_1.Service.d3Transform().translate(cw - scrollWidth, 0)(); });
                 connectContainerAndScrollbar(scrollBarContainer, scrollWidth, cw - yscrollOffset, ew + yscrollOffset, 0, function (obj) {
-                    elementContainer_1.attr("transform", Service_1.Service.d3Transform().translate(getTranslate(elementContainer_1)[0], -obj.offset)());
+                    var translate = getTranslate(moveAbleContainer_1);
+                    moveAbleContainer_1.attr("transform", Service_1.Service.d3Transform().translate(translate[0], -obj.offset)());
                 });
             }
         }
     }
-    var Flexable = (function (_super) {
-        __extends(Flexable, _super);
-        function Flexable() {
-            _super.apply(this, arguments);
-        }
-        Flexable.connectContainerAndScrollbar = connectContainerAndScrollbar;
-        Flexable.flexableContainer = flexableContainer;
-        Flexable.formatTranslate = formatTranslate;
-        return Flexable;
-    }(Service_1.BaseClass));
-    exports.Flexable = Flexable;
+    exports.flexableContainer = flexableContainer;
 });
 //# sourceMappingURL=Flexable.js.map

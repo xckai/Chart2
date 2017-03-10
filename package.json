@@ -3,19 +3,21 @@
   "version": "2.0.0",
   "description": "chart version 2",
   "scripts": {
-    "start": "tsc && concurrently \"npm run tsc:w\" \"npm run coding\"",
-    "lite": "lite-server",
+    "start": " concurrently \"npm run tsc:w\" \"gulp start\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "coding":"gulp develop"
+    "coding": "gulp develop"
   },
   "author": "xckai",
   "license": "Free",
   "dependencies": {
-
+    "@types/d3": "^4.7.0",
+    "@types/d3-selection": "^1.0.10"
   },
   "devDependencies": {
-    "concurrently": "^2.0.0",
-    "gulp": "^3.9.1"
+    "concurrently": "^3.4.0",
+    "gulp": "^3.9.1",
+    "browser-sync": "^2.18.0",
+    "gulp-less": "^3.3.0"
   }
 }
