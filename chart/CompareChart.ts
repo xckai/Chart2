@@ -1,11 +1,13 @@
 /// <amd-dependency path="lib/underscore">
 /// <amd-dependency path="lib/d3">
 declare var _:any;
-declare var d3:any;
+//declare var d3:any;
+import d3= require('lib/d3')
 //import * as d3 from "d3"
 import {CompareChartMeasure} from "./Measure"
 import {Evented} from './Evented'
 import { Util} from "./Utils"
+let a=document.createElement
 class Layout{
     constructor(){
 
@@ -15,7 +17,7 @@ class Layout{
    private _x:0
    private _y:0
    private _p:"default"
-   private _node:null
+   private _node:HTMLElement
     w(v?):any{
         return v!==undefined? (this._w=v,this):this._w;
     }
@@ -169,8 +171,32 @@ export class CompareChart extends Evented{
         console.log(c)
     }
     prepareCanvas(){
-        this.canvas
-    }
 
+        this.canvas.wrapper.node(d3.select("#chart").append("div").classed(this.config.class,true).node())
+        this.canvas.node.node(d3.select(this.canvas.wrapper.node()).append("svg").node());
+        let node = d3.select(this.canvas.node.node())
+        let c=this.canvas
+        c.title.node(node.append("g").classed("title",true).append("text").node())
+
+        c.xAxis.node(node.append("g").classed("xAxis",true).node())
+        c.xTitle.node(node.append("g").classed("xTitle",true).append("text").node())
+
+        c.yTitle.node(node.append("g").classed("yTitle",true).append("text").node())
+        c.yAxis.node(node.append("g").classed("yAxis",true).node())
+
+        c.y2Title.node(node.append("g").classed("y2Title",true).append("text").node())
+        c.y2Axis.node(node.append("g").classed("y2Axis",true).node())
+    }
+    updateCanvasStyle(){
+        let c=this.canvas;
+        let con=this.config
+        let translater=(x:number,y:number)=>{
+            return "translate("+x+" "+y+")"
+        }
+        let updater=(l:Layout)=>{
+            d3.select(l.node()).style("transform",translater(l.x(),l.y()))
+        }
+    }
+    
     
 }

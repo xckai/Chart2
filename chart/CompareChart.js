@@ -8,19 +8,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/underscore", "lib/d3", "./Evented", "./Utils"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore", "lib/d3"], function (require, exports, d3, Evented_1, Utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Evented_1 = require("./Evented");
-    var Utils_1 = require("./Utils");
+    var a = document.createElement;
     var Layout = (function () {
         function Layout() {
         }
@@ -177,7 +168,27 @@ var __extends = (this && this.__extends) || (function () {
             console.log(c);
         };
         CompareChart.prototype.prepareCanvas = function () {
-            this.canvas;
+            this.canvas.wrapper.node(d3.select("#chart").append("div").classed(this.config.class, true).node());
+            this.canvas.node.node(d3.select(this.canvas.wrapper.node()).append("svg").node());
+            var node = d3.select(this.canvas.node.node());
+            var c = this.canvas;
+            c.title.node(node.append("g").classed("title", true).append("text").node());
+            c.xAxis.node(node.append("g").classed("xAxis", true).node());
+            c.xTitle.node(node.append("g").classed("xTitle", true).append("text").node());
+            c.yTitle.node(node.append("g").classed("yTitle", true).append("text").node());
+            c.yAxis.node(node.append("g").classed("yAxis", true).node());
+            c.y2Title.node(node.append("g").classed("y2Title", true).append("text").node());
+            c.y2Axis.node(node.append("g").classed("y2Axis", true).node());
+        };
+        CompareChart.prototype.updateCanvasStyle = function () {
+            var c = this.canvas;
+            var con = this.config;
+            var translater = function (x, y) {
+                return "translate(" + x + " " + y + ")";
+            };
+            var updater = function (l) {
+                d3.select(l.node()).style("transform", translater(l.x(), l.y()));
+            };
         };
         return CompareChart;
     }(Evented_1.Evented));
