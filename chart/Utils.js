@@ -3,6 +3,23 @@ define(["require", "exports", "lib/underscore"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Util;
     (function (Util) {
+        function isEndWith(s, ed) {
+            var ss = s.toString();
+            var matcher = new RegExp(ed + "$");
+            return matcher.test(ss);
+        }
+        Util.isEndWith = isEndWith;
+        function isBeginWith(s, bs) {
+            var ss = s.toString();
+            var matcher = new RegExp("^" + bs);
+            return matcher.test(ss);
+        }
+        Util.isBeginWith = isBeginWith;
+        function isContaint(s, ss) {
+            var matcher = new RegExp(ss);
+            return matcher.test(s.toString());
+        }
+        Util.isContaint = isContaint;
         function max(nums) {
             var n = Number.MIN_VALUE;
             nums.forEach(function (num) {
@@ -48,17 +65,66 @@ define(["require", "exports", "lib/underscore"], function (require, exports) {
     })(Util = exports.Util || (exports.Util = {}));
     var Style = (function () {
         function Style(color, stroke, fillColor, opacity) {
+            this._font = 14;
             this.color = "black";
             this.stroke = 1;
             this.fillColor = "black";
             this.opacity = 1;
+            this.fontFamily = "arial,sans-serif";
             this.color = color;
             this.stroke = stroke;
             this.fillColor = fillColor;
             this.opacity = opacity;
         }
+        Object.defineProperty(Style.prototype, "font", {
+            get: function () {
+                return this._font;
+            },
+            set: function (f) {
+                if (!isNaN(f)) {
+                    this._font = f;
+                }
+                if (Util.isEndWith(f, "px")) {
+                    this._font = parseFloat(f);
+                }
+                if (Util.isEndWith(f, "em") || Util.isEndWith(f, "rem")) {
+                    var font = window.getComputedStyle(document.body).getPropertyValue('font-size') || 16;
+                    this._font = parseFloat(f) * parseFloat(font);
+                }
+            },
+            enumerable: true,
+            configurable: true
+        });
         return Style;
     }());
     exports.Style = Style;
+    var Layout = (function () {
+        function Layout(render) {
+            this.render = "html";
+            if (render) {
+                this.render = render;
+            }
+        }
+        Layout.prototype.w = function (v) {
+            return v !== undefined ? (this._w = v, this) : this._w;
+        };
+        Layout.prototype.h = function (v) {
+            return v !== undefined ? (this._h = v, this) : this._h;
+        };
+        Layout.prototype.node = function (v) {
+            return v !== undefined ? (this._node = v, this) : this._node;
+        };
+        Layout.prototype.x = function (v) {
+            return v !== undefined ? (this._x = v, this) : this._x;
+        };
+        Layout.prototype.y = function (v) {
+            return v !== undefined ? (this._y = v, this) : this._y;
+        };
+        Layout.prototype.position = function (p) {
+            return p !== undefined ? (this._p = p, this) : this._p;
+        };
+        return Layout;
+    }());
+    exports.Layout = Layout;
 });
 //# sourceMappingURL=Utils.js.map

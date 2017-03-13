@@ -1,39 +1,52 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>QUnit basic example</title>
-  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+    <meta charset="utf-8">
+    <title>QUnit basic example</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
 </head>
+
 <body>
-  <div id="chart"></div>
-
-  <script  src="../lib/require.js"></script>
-
-
-
-
- 
+    <div id="chart">
+        <ul>
+            <li>ahah</li>
+            <li>oo</li>
+            <li>tt</li>
+            <li>ss</li>
+        </ul>
+    </div>
+    <script src="../lib/require.js"></script>
 </body>
-    <script >
-        requirejs.config({
+<script>
+    requirejs.config({
         //By default load any module IDs from js/lib
-                    baseUrl: '../',
-                });
-            require(['chart/CompareChart'],function(c){
-                 var a= new c.CompareChart({title:{
-            value:"haha",
-            class:"title",
-            visiable:true
-        }});
-                 a.prepareCanvas();
-                //console.log(c);
-            });
-    </script>
+        baseUrl: '../',
+    });
+    require(['chart/CompareChart',"chart/CompareChartLine"], function (c,m) {
+        var a = new c.CompareChart({
+            title: {
+                value: "haha",
+                class: "title",
+                visiable: true
+            }
+        });
+        var m=new m.CompareChartLine("1","haha","y",[{"SPEED":23.5,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 02:10:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:00:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1},{"SPEED":23.1,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:05:00 GMT","TAXI_COUNT":2},{"SPEED":29,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:10:00 GMT","TAXI_COUNT":2},{"SPEED":28.8,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:15:00 GMT","TAXI_COUNT":1},{"SPEED":28.6,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:20:00 GMT","TAXI_COUNT":1},{"SPEED":28.6,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 05:25:00 GMT","TAXI_COUNT":1},{"SPEED":31.5,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 06:05:00 GMT","TAXI_COUNT":1},{"SPEED":26.6,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 06:10:00 GMT","TAXI_COUNT":2},{"SPEED":26,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 06:15:00 GMT","TAXI_COUNT":1},{"SPEED":16.1,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 06:25:00 GMT","TAXI_COUNT":2},{"SPEED":15.2,"w:layer":0,"ID":1765673185313024,"TIMESTAMP":"Tue Feb 21 2017 06:30:00 GMT","TAXI_COUNT":1}].map(function(d){
+            d.x=d["TIMESTAMP"]
+            d.y=d["SPEED"]
+            return d;
+        }))
+        a.render();
+        //console.log(c);`
+    });
+</script>
 <style>
-   .rotate{
-         transform: rotate(-45deg);
-     }
+    .rotate {
+        transform: rotate(-45deg);
+    }
+    .axis {
+        
+    }
 </style>
+
 </html>

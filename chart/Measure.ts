@@ -19,10 +19,11 @@ export abstract class  Measure extends Evented {
     }
 }
 
-export abstract class CompareChartMeasure extends Measure {
-    constructor(id?,name?,type?,ref?){
+export class CompareChartMeasure extends Measure {
+    constructor(id?,name?,type?,ref?,ds?){
         super(id,name,type);
         this.ref=ref||this.ref;
+        this.data(ds)
     }
     ref:string ="y1";
     data(ds?){
@@ -33,4 +34,5 @@ export abstract class CompareChartMeasure extends Measure {
         }
         return this.dataset;
     }
+
 }

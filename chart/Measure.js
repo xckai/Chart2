@@ -29,10 +29,11 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
     exports.Measure = Measure;
     var CompareChartMeasure = (function (_super) {
         __extends(CompareChartMeasure, _super);
-        function CompareChartMeasure(id, name, type, ref) {
+        function CompareChartMeasure(id, name, type, ref, ds) {
             var _this = _super.call(this, id, name, type) || this;
             _this.ref = "y1";
             _this.ref = ref || _this.ref;
+            _this.data(ds);
             return _this;
         }
         CompareChartMeasure.prototype.data = function (ds) {
