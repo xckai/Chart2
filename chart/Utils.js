@@ -70,11 +70,14 @@ define(["require", "exports", "lib/underscore"], function (require, exports) {
             this.stroke = 1;
             this.fillColor = "black";
             this.opacity = 1;
+            this.lineWidth = 1;
+            this.rx = 2;
+            this.ry = 2;
             this.fontFamily = "arial,sans-serif";
-            this.color = color;
-            this.stroke = stroke;
-            this.fillColor = fillColor;
-            this.opacity = opacity;
+            this.color = color || this.color;
+            this.stroke = stroke || this.stroke;
+            this.fillColor = fillColor || this.fillColor;
+            this.opacity = opacity || this.opacity;
         }
         Object.defineProperty(Style.prototype, "font", {
             get: function () {

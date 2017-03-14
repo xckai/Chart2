@@ -14,8 +14,8 @@ export abstract class  Measure extends Evented {
     style:Style=new Style();
     id:string
     type:string
-    plunkDatas(type:string):any[]{
-       return _.plunk(this.dataset,type);
+    pluckDatas(type:string):any[]{
+       return _.pluck(this.dataset,type);
     }
 }
 

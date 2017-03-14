@@ -12,6 +12,26 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var a = document.createElement;
+    var CompareChartElement = (function (_super) {
+        __extends(CompareChartElement, _super);
+        function CompareChartElement(id, l, chart, data, visiable, render) {
+            var _this = _super.call(this) || this;
+            _this.z_index = 1;
+            _this.layout = l;
+            _this.chart = chart;
+            _this.visiable = visiable,
+                _this.render = render;
+            _this.id = id;
+            _this.data = data;
+            return _this;
+        }
+        CompareChartElement.prototype.getNode = function () {
+            if (this.chart) {
+                return this.chart.wrapper;
+            }
+        };
+        return CompareChartElement;
+    }(Evented_1.Evented));
     var ChartElement = (function (_super) {
         __extends(ChartElement, _super);
         function ChartElement(type, l, d, chart) {
@@ -50,9 +70,15 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
                     class: "y2Title",
                     visiable: true
                 },
+                chart: {
+                    value: "",
+                    class: "chart",
+                    visiable: true
+                },
                 width: 300,
                 height: 300
             };
+            _this.defaultElements = {};
             _this.wrapper = new Utils_1.Layout();
             _this.canvas = {
                 node: new Utils_1.Layout(),
@@ -61,10 +87,10 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
                 xTitle: new Utils_1.Layout(),
                 yTitle: new Utils_1.Layout(),
                 y2Title: new Utils_1.Layout(),
-                xAxis: new Utils_1.Layout("svg"),
-                yAxis: new Utils_1.Layout("svg"),
-                y2Axis: new Utils_1.Layout("svg"),
-                chart: new Utils_1.Layout("svg")
+                xAxis: new Utils_1.Layout(),
+                yAxis: new Utils_1.Layout(),
+                y2Axis: new Utils_1.Layout(),
+                chart: new Utils_1.Layout()
             };
             _this.legend = {
                 getHeight: function (o) {
@@ -74,11 +100,25 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
                     return 0;
                 }
             };
+            _this.measures = [];
             _.each(cfg, function (v, k) {
                 _this.config[k] = v;
             });
             return _this;
         }
+        CompareChart.prototype.getDefaultElements = function () {
+            var r = [];
+            r.push(new CompareChartElement("legend", this.canvas.legend, this, this.getMeasures(), true, null));
+            r.push(new CompareChartElement("title", this.canvas.title, this, this.config.title, this.config.title.visiable, titleRender()));
+            r.push(new CompareChartElement("xTitle", this.canvas.xTitle, this, this.config.xTitle, this.config.xTitle.visiable, titleRender()));
+            r.push(new CompareChartElement("yTitle", this.canvas.yTitle, this, this.config.yTitle, this.config.yTitle.visiable, titleRender()));
+            r.push(new CompareChartElement("y2Title", this.canvas.y2Title, this, this.config.y2Title, this.config.y2Title.visiable, titleRender()));
+            r.push(new CompareChartElement("xAxis", this.canvas.xAxis, this, "bottom", true, axisRender()));
+            r.push(new CompareChartElement("yAxis", this.canvas.yAxis, this, "left", true, axisRender()));
+            r.push(new CompareChartElement("y2Axis", this.canvas.y2Axis, this, "right", true, axisRender()));
+            r.push(new CompareChartElement("chart", this.canvas.chart, this, this.getMeasures(), true, chartRender()));
+            return r;
+        };
         CompareChart.prototype.addMeasure = function (nm) {
             var i = _.findIndex(this.measures, function (m) { return nm.id == m.id; });
             if (i != -1) {
@@ -95,11 +135,17 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
         };
         CompareChart.prototype.getDomain = function (ms, type, revert) {
             var r = [];
-            if (!ms) {
+            if (ms.length == 0) {
                 r = [0, 1];
             }
             else {
-                var mss = _.reduce(ms, function (m1, m2) { return m1.plunkDatas(type).concat(m1.plunkDatas(type)); });
+                var mss = void 0;
+                if (ms.length == 1) {
+                    mss = ms[0].pluckDatas(type);
+                }
+                else {
+                    mss = _.reduce(ms, function (m1, m2) { return m1.pluckDatas(type).concat(m1.pluckDatas(type)); });
+                }
                 r[0] = Utils_1.Util.min(mss);
                 r[1] = Utils_1.Util.max(mss);
             }
@@ -136,10 +182,10 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
                 this.canvas.title.h(this.stringRect(this.config.title).height);
             }
             if (con.xTitle.visiable) {
-                c.xTitle.x(0);
-                c.xTitle.y(c.node.h() - this.legend.getHeight("bottom"));
                 c.xTitle.w(this.stringRect(c.xTitle).width);
                 c.xTitle.h(this.stringRect(c.xTitle).height);
+                c.xTitle.x(0);
+                c.xTitle.y(c.node.h() - this.legend.getHeight("bottom") - c.xTitle.h());
             }
             c.xAxis.h(30);
             c.xAxis.y(c.node.h() - c.xTitle.h() - c.xAxis.h() - this.legend.getHeight("bottom"));
@@ -171,6 +217,7 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
             c.chart.w(c.node.w() - c.yTitle.w() - c.yAxis.w() - c.y2Axis.w() - c.y2Title.w());
             c.xAxis.x(c.yTitle.w() + c.yAxis.w());
             c.xAxis.w(c.chart.w());
+            c.xTitle.x(c.yTitle.w() + c.yAxis.w());
             c.y2Title.h(c.chart.h());
             c.yTitle.h(c.chart.h());
             c.xTitle.w(c.chart.w());
@@ -192,10 +239,10 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
         CompareChart.prototype.toElements = function (canvas, measures) {
             var r = [], chart = this;
             r.push(new ChartElement("chart", this.canvas.chart, this.measures, this));
-            r.push(new ChartElement("title", this.canvas.title, this.config.title.value, this));
-            r.push(new ChartElement("title", this.canvas.xTitle, this.config.xTitle.value, this));
-            r.push(new ChartElement("title", this.canvas.yTitle, this.config.yTitle.value, this));
-            r.push(new ChartElement("title", this.canvas.y2Title, this.config.y2Title.value, this));
+            r.push(new ChartElement("title", this.canvas.title, this.config.title, this));
+            r.push(new ChartElement("title", this.canvas.xTitle, this.config.xTitle, this));
+            r.push(new ChartElement("title", this.canvas.yTitle, this.config.yTitle, this));
+            r.push(new ChartElement("title", this.canvas.y2Title, this.config.y2Title, this));
             r.push(new ChartElement("axis", this.canvas.xAxis, "bottom", this));
             r.push(new ChartElement("axis", this.canvas.yAxis, "left", this));
             r.push(new ChartElement("axis", this.canvas.y2Axis, "right", this));
@@ -207,9 +254,9 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
         CompareChart.prototype.render = function () {
             this.prepareCanvas();
             this.calculateLayout();
-            var renderer = this.renderer;
-            this.toElements(this.canvas, this.measures).forEach(titleRender);
-            this.toElements(this.canvas, this.measures).forEach(axisRender);
+            this.getDefaultElements().forEach(function (e) {
+                e.render ? e.render(e) : null;
+            });
         };
         CompareChart.prototype.renderer = function (e) {
             if (e.type !== "node") {
@@ -238,65 +285,129 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"
         CompareChart.prototype.updateCanvasLayout = function () {
             var c = this.canvas;
             var con = this.config;
-            var translater = function (x, y) {
-                if (x != undefined && y != undefined) {
-                    return "translate(" + x + "px," + y + "px)";
-                }
-                return "";
-            };
-            var updater = function (l) {
-                d3.select(l.node()).style("transform", translater(l.x(), l.y()));
-            };
-            var clipper = function (l) {
-            };
-            _.each(this.canvas, function (v, k) {
-                updater(v);
-            });
         };
         return CompareChart;
     }(Evented_1.Evented));
     exports.CompareChart = CompareChart;
-    var titleRender = function (e) {
-        if (e.layout.render === "html") {
-            var div = d3.select(e.chart.wrapper.node()).append("div")
-                .style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px")
-                .attr("type", e.type);
-            div.append("p").text(e.data);
+    var titleRender = function (t) {
+        if (!t || t === "html") {
+            return function (e) {
+                var div = d3.select(e.chart.wrapper.node()).append("div")
+                    .style("position", "absolute")
+                    .style("left", e.layout.x() + "px")
+                    .style("top", e.layout.y() + "px")
+                    .style("height", e.layout.h() + "px")
+                    .style("width", e.layout.w() + "px")
+                    .classed(e.data.class, true);
+                div.append("p").text(e.data.value);
+            };
         }
     };
-    var axisRender = function (e) {
-        if (e.layout.render === "svg") {
-            var d = d3.select(e.chart.wrapper.node()).append("svg")
-                .style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px")
-                .attr("type", e.type);
-            var axis = null;
-            if (e.data === "left") {
-                var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y", true)).range([0, e.layout.h()]);
-                axis = d3.axisLeft(scale);
-                d.style("left", e.layout.x() - e.layout.w() + "px");
-                d.style("width", e.layout.w() + 2 + "px");
-                d.append("g").style("transform", "translate(" + (e.layout.w()) + "px,0px)").call(axis);
-                //d.call(axis)
+    var axisRender = function (t) {
+        if (!t || t === "svg") {
+            return function (e) {
+                var d = d3.select(e.chart.wrapper.node()).append("svg")
+                    .style("position", "absolute")
+                    .style("left", e.layout.x() + "px")
+                    .style("top", e.layout.y() + "px")
+                    .style("height", e.layout.h() + "px")
+                    .style("width", e.layout.w() + "px");
+                var axis = null;
+                if (e.data === "left") {
+                    var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y", true)).range([0, e.layout.h()]);
+                    axis = d3.axisLeft(scale);
+                    d.style("left", e.layout.x() - e.layout.w() + "px");
+                    d.style("width", e.layout.w() + 2 + "px");
+                    d.append("g").style("transform", "translate(" + (e.layout.w()) + "px,0px)").call(axis);
+                    //d.call(axis)
+                }
+                if (e.data === "right") {
+                    var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y2", true)).range([0, e.layout.h()]);
+                    axis = d3.axisRight(scale);
+                    d.call(axis);
+                }
+                if (e.data === "bottom") {
+                    var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "x")).range([0, e.layout.w()]);
+                    axis = d3.axisBottom(scale);
+                    d.call(axis);
+                }
+            };
+        }
+    };
+    var chartRender = function (t) {
+        if (!t || t === "svg") {
+            return function (e) {
+                var xScale = e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(), "x"), [0, e.layout.w()]);
+                var yScale = e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(), "y", true), [0, e.layout.h()]);
+                var y2Scale = e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(), "y2", true), [0, e.layout.h()]);
+                var c = d3.select(e.chart.wrapper.node()).append("svg")
+                    .style("position", "absolute")
+                    .style("left", e.layout.x() + "px")
+                    .style("top", e.layout.y() + "px")
+                    .style("height", e.layout.h() + "px")
+                    .style("width", e.layout.w() + "px");
+                e.layout.node(c.node());
+                var d = [].concat(e.data);
+                d.forEach(function (v, k) {
+                    switch (v.type) {
+                        case "line":
+                            lineRender(xScale, yScale, e.layout.node(), v.data(), v.style);
+                            break;
+                        case "circle":
+                            circleRender(xScale, yScale, e.layout.node(), v.data(), v.style);
+                    }
+                });
+            };
+        }
+    };
+    var pathGen = function (xScale, yScale, ds, closed) {
+        if (ds.length < 1)
+            return "M0,0";
+        var lineString = "";
+        var isStartPoint = true;
+        for (var i = 0; i < ds.length; ++i) {
+            if (isStartPoint) {
+                if (isNaN(ds[i].y)) {
+                    isStartPoint = true;
+                    continue;
+                }
+                else {
+                    lineString += "M" + xScale(ds[i].x) + "," + yScale(ds[i].y);
+                    isStartPoint = false;
+                }
             }
-            if (e.data === "right") {
-                var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y2", true)).range([0, e.layout.h()]);
-                axis = d3.axisRight(scale);
-                d.call(axis);
-            }
-            if (e.data === "bottom") {
-                var scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "x")).range([0, e.layout.w()]);
-                axis = d3.axisBottom(scale);
-                d.call(axis);
+            else {
+                if (isNaN(ds[i].y)) {
+                    isStartPoint = true;
+                    continue;
+                }
+                else {
+                    lineString += "L" + xScale(ds[i].x) + "," + yScale(ds[i].y);
+                }
             }
         }
+        if (closed) {
+            lineString += "Z";
+        }
+        return lineString;
+    };
+    var lineRender = function (xScale, yScale, node, ds, style, ctx) {
+        d3.select(node).append("path").attr("d", pathGen(xScale, yScale, ds, false))
+            .style("stroke", style.color)
+            .style("stroke-width", style.lineWidth)
+            .style("fill", "none");
+    };
+    var circleRender = function (xScale, yScale, node, ds, style, ctx) {
+        _.each([].concat(ds), function (d) {
+            d3.select(node).append("ellipse").attr("cx", xScale(d.x))
+                .attr("cy", yScale(d.y))
+                .attr("rx", style.rx)
+                .attr("ry", style.ry)
+                .style("fill", style.fillColor);
+        });
+    };
+    var barRender = function (xScale, yScale, node, ds, style, ctx) {
+        _.each();
     };
 });
 //# sourceMappingURL=CompareChart.js.map

@@ -21,8 +21,8 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
             _this.type = type;
             return _this;
         }
-        Measure.prototype.plunkDatas = function (type) {
-            return _.plunk(this.dataset, type);
+        Measure.prototype.pluckDatas = function (type) {
+            return _.pluck(this.dataset, type);
         };
         return Measure;
     }(Evented_1.Evented));

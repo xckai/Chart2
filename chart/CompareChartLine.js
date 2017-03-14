@@ -13,8 +13,8 @@ define(["require", "exports", "./Measure"], function (require, exports, Measure_
     Object.defineProperty(exports, "__esModule", { value: true });
     var CompareChartLine = (function (_super) {
         __extends(CompareChartLine, _super);
-        function CompareChartLine(id, name, type, ref, ds) {
-            var _this = _super.call(this, id, name, type, ref, ds) || this;
+        function CompareChartLine(id, name, ref, ds) {
+            var _this = _super.call(this, id, name, "line", ref, ds) || this;
             _this.type = "line";
             return _this;
         }

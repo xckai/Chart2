@@ -60,16 +60,19 @@ export module Util{
 }
 export class Style{
     constructor(color ?,stroke ?,fillColor ?,opacity ?){
-        this.color=color;
-        this.stroke =stroke;
-        this.fillColor =fillColor;
-        this.opacity =opacity;
+        this.color=color||this.color
+        this.stroke =stroke||this.stroke;
+        this.fillColor =fillColor||this.fillColor
+        this.opacity =opacity||this.opacity
     }
     private _font:any=14
     color:string ="black"
     stroke:number =1
     fillColor:string ="black"
     opacity:number =1
+    lineWidth:number=1
+    rx:number=2
+    ry:number=2
     set font(f:any){
         if(!isNaN(f)){
             this._font=f;
