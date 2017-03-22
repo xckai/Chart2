@@ -3,18 +3,12 @@
 
 <head>
     <meta charset="utf-8">
-    <title>QUnit basic example</title>
+    <title>ResizeAble AutoLayout</title>
     <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
 </head>
 
 <body>
-    <div id="chart">
-        <ul>
-            <li>ahah</li>
-            <li>oo</li>
-            <li>tt</li>
-            <li>ss</li>
-        </ul>
+    <div id="chart" style="pointer-events: none; resize: both;  border: 2px solid;height: 800px;width:600px ;resize: both;overflow: auto;">
     </div>
     <script src="../lib/require.js"></script>
 </body>
@@ -23,7 +17,7 @@
         //By default load any module IDs from js/lib
         baseUrl: '../',
     });
-    require(['chart/CompareChart',"chart/CompareChartLine"], function (c,m) {
+    require(['chart/CompareChart',"chart/CompareChartLine","test/Test"], function (c,m,test) {
         var a = new c.CompareChart({
             title: {
                 value: "haha",
@@ -44,26 +38,44 @@
             return d;
         }))
         a.addMeasure(m)
+         a.addMeasure(test.Tester.getLegend())
         a.render();
         //console.log(c);`
     });
 </script>
 <style>
-    .rotate {
-        transform: rotate(-45deg);
-    }
     .axis {
         
     }
-    .CompareChart .title p{
+    .CompareChart .title {
             margin-top: 0;
         align-content: center;
         text-align: center;
     }
-    .CompareChart .xTitle p{
+    .CompareChart .xTitle {
             margin-top: 0;
         align-content: center;
         text-align: center;
+    }
+    .CompareChart .rotation text{
+        transform: rotate(-40deg);
+        text-anchor : end
+    }
+    .getStringRect .rotation{
+        transform: rotate(-40deg)
+    }
+    .CompareChart .legend ul{
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+         justify-content:center
+    }
+    .CompareChart .legend li{
+       width: 100px
+    }
+    .CompareChart .legend p{
+        margin: 0
     }
 </style>
 

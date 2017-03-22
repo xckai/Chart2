@@ -8,7 +8,7 @@ gulp.task('start', function() {
   //   console.log(out);
   // })
  // var ls   = spawn("tsc",["-w"], {stdio : "inherit"});
-  browserSync.init({server:{baseDir:"./"}});
+  browserSync.init({server:{baseDir:"./",index:"test/index.html"}});
   gulp.watch("./*/*.js",function(e){
         browserSync.reload();
         console.log(e.path+"-------file changed")
@@ -24,3 +24,11 @@ gulp.task('start', function() {
    
   // })
 });
+var rjs = require("gulp-r");
+gulp.task("buddle",()=>{
+gulp.src("./chart/*.js")
+    .pipe(rjs({
+        "baseUrl": "./"
+    }))
+    .pipe(gulp.dest("dist"));
+})

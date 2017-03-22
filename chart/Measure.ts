@@ -3,11 +3,12 @@ declare var _:any;
 import {Evented} from './Evented'
 import { Style} from "./Utils"
 export abstract class  Measure extends Evented {
-    constructor(id?,name?,type?) {
+    constructor(id?,name?,type?,ds?) {
         super();
         this.id=id;
         this.name=name || id;
         this.type=type;
+        this.dataset=ds;
     }
     dataset:any [];
     name:string
@@ -25,7 +26,8 @@ export class CompareChartMeasure extends Measure {
         this.ref=ref||this.ref;
         this.data(ds)
     }
-    ref:string ="y1";
+    ref:string ="y1"
+    _node:any
     data(ds?){
         if(ds){
             this.dataset=ds;
@@ -33,6 +35,13 @@ export class CompareChartMeasure extends Measure {
             return this;
         }
         return this.dataset;
+    }
+    node(n){
+        if(n){
+            this._node=n
+            return this
+        }
+        return this._node
     }
 
 }

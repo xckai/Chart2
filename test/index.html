@@ -3,23 +3,38 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>QUnit basic example</title>
-  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+  <title>Chart Test</title>
 </head>
+<script src="../lib/require.js"></script>
 <body>
-  <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
-    <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
-  <script data-main="main" src="../lib/require.js"></script>
-
-
-
-
- 
+    <h1>Chart Test</h1>
+<ul id="testlist"></ul>
 </body>
+<script>
+    requirejs.config({
+        //By default load any module IDs from js/lib
+        baseUrl: '../',
+    });
+    var htmls=[{des:"Resizeable&Autolayout",href:"../test/resize.html"}]
+    htmls.push({des:"Qunit",href:"../test/qunit.html"})
+    htmls.push({des:"compareChart",href:"../test/comparechart.html"})
+    require(["lib/d3"],function(d3){
+        console.log(d3)
+        d3.select("#testlist").selectAll("li").data(htmls).enter().append("li")
+                                                    .append("a")
+                                                    .text(function(d){
+                                                        return d.des
+                                                    })
+                                                    .attr("href",function(d){return d.href})
+                                                    .attr("target",function(d){return d.des})
+    })
+//    window.onload=function(){
+//      htmls.forEach(function(d){
+//         window.open(d.href,d.des)
+//     })
+//    }
+</script>
 <style>
-   .rotate{
-         transform: rotate(-45deg);
-     }
+
 </style>
 </html>

@@ -15,9 +15,10 @@
     "@types/d3-selection": "^1.0.10"
   },
   "devDependencies": {
+    "browser-sync": "^2.18.0",
     "concurrently": "^3.4.0",
     "gulp": "^3.9.1",
-    "browser-sync": "^2.18.0",
-    "gulp-less": "^3.3.0"
+    "gulp-less": "^3.3.0",
+    "gulp-r": "^1.1.3"
   }
 }

@@ -13,12 +13,13 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
     Object.defineProperty(exports, "__esModule", { value: true });
     var Measure = (function (_super) {
         __extends(Measure, _super);
-        function Measure(id, name, type) {
+        function Measure(id, name, type, ds) {
             var _this = _super.call(this) || this;
             _this.style = new Utils_1.Style();
             _this.id = id;
             _this.name = name || id;
             _this.type = type;
+            _this.dataset = ds;
             return _this;
         }
         Measure.prototype.pluckDatas = function (type) {
@@ -43,6 +44,13 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
                 return this;
             }
             return this.dataset;
+        };
+        CompareChartMeasure.prototype.node = function (n) {
+            if (n) {
+                this._node = n;
+                return this;
+            }
+            return this._node;
         };
         return CompareChartMeasure;
     }(Measure));

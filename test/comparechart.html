@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ResizeAble AutoLayout</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+</head>
+
+<body>
+    <div id="chart" style="height: 800px;width:800px ;"></div>
+    <div class="buttons">
+        <button onclick="addLine()">AddLine</button>
+        <button onclick="addBar()">AddBar</button>
+        <button onclick="addLegend()">AddLegend</button>
+        </div>
+    <script src="../lib/require.js"></script>
+</body>
+<script>
+    requirejs.config({
+        //By default load any module IDs from js/lib
+        baseUrl: '../',
+    });
+    var chart,test;
+    require(['chart/CompareChart',"test/test",], function (c,t) {
+        chart = new c.CompareChart({
+            title: {
+                value: "haha",
+                class: "title",
+                visiable: true
+            },
+            xTitle:{
+            value:"x",
+            class:"xTitle",
+            visiable:true
+        }
+    });
+        test=t.Tester
+    });
+    function addLine(){
+        if(chart && test){
+            chart.addMeasure(test.getLine())
+            chart.render();
+        }
+    }
+    function addBar(){
+        if(chart && test){
+            chart.addMeasure(test.getBar())
+            chart.render();
+        }
+    }
+    function addLegend(){
+         
+          if(chart && test){
+            chart.addMeasure(test.getLegend())
+            chart.render();
+        }
+    }
+</script>
+<style>
+    .axis {
+        
+    }
+    .CompareChart .title {
+            margin-top: 0;
+        align-content: center;
+        text-align: center;
+    }
+    .CompareChart .xTitle {
+            margin-top: 0;
+        align-content: center;
+        text-align: center;
+    }
+    .CompareChart .rotation text{
+        transform: rotate(-40deg);
+        text-anchor : end
+    }
+    .getStringRect .rotation{
+        transform: rotate(-40deg)
+    }
+    .CompareChart .legend ul{
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+         justify-content:center
+    }
+    .CompareChart .legend li{
+       width: 100px
+    }
+    .CompareChart .legend p{
+        margin: 0
+    }
+</style>
+
+</html>
