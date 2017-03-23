@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/underscore"], function (require, exports, d3, Evented_1, Chart_1, Utils_1) {
+define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./ChartElement", "lib/underscore"], function (require, exports, d3, Evented_1, Chart_1, Utils_1, ChartElement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CompareChartElement = (function (_super) {
@@ -32,6 +32,7 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
         __extends(CompareChart, _super);
         function CompareChart(cfg) {
             var _this = _super.call(this, cfg) || this;
+            //CanvasElement:ChartElement
             _this.config = {
                 appendTo: "chart",
                 class: "CompareChart",
@@ -105,24 +106,67 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
                 xTitle: new Utils_1.Layout(),
                 yTitle: new Utils_1.Layout(),
                 y2Title: new Utils_1.Layout(),
-                xAxis: new Utils_1.Layout(),
-                yAxis: new Utils_1.Layout(),
-                y2Axis: new Utils_1.Layout(),
+                xAxis: new Utils_1.Layout().setPosition("bottom"),
+                yAxis: new Utils_1.Layout().setPosition("left"),
+                y2Axis: new Utils_1.Layout().setPosition("right"),
                 chart: new Utils_1.Layout()
             };
-            _this.legend = {
-                getHeight: function (o) {
-                    return 0;
-                },
-                getWidth: function (o) {
-                    return 0;
-                }
+            _this.styles = {
+                xAxis: new Utils_1.Style().setClass(_this.config.xAxis.class),
+                yAxis: new Utils_1.Style().setClass(_this.config.yAxis.class),
+                y2Axis: new Utils_1.Style().setClass(_this.config.y2Axis.class),
+                title: new Utils_1.Style().setClass(_this.config.title.class),
+                xTitle: new Utils_1.Style().setClass(_this.config.xTitle.class),
+                yTitle: new Utils_1.Style().setClass(_this.config.yTitle.class),
+                y2Title: new Utils_1.Style().setClass(_this.config.y2Title.class),
+                legend: new Utils_1.Style().setClass(_this.config.legend.class)
             };
             _this.measures = [];
             _this.barIndex = {};
             _.each(cfg, function (v, k) {
                 _this.config[k] = v;
             });
+            _this.xAxisElement = new ChartElement_1.AxisElement(_this).setLayout(_this.canvas.xAxis)
+                .setStyle(_this.styles.xAxis)
+                .setDomainFn(function () {
+                return _this.getDomain(_this.getMeasures(), "x");
+            })
+                .setConfig({ format: _this.config.xAxis.format });
+            _this.yAxisElement = new ChartElement_1.AxisElement(_this).setLayout(_this.canvas.yAxis)
+                .setStyle(_this.styles.yAxis)
+                .setDomainFn(function () {
+                return _this.getDomain(_this.getMeasures(), "y", true);
+            })
+                .setConfig({ format: _this.config.yAxis.format });
+            _this.y2AxisElement = new ChartElement_1.AxisElement(_this).setLayout(_this.canvas.y2Axis)
+                .setStyle(_this.styles.y2Axis)
+                .setDomainFn(function () {
+                return _this.getDomain(_this.getMeasures(), "y2", true);
+            })
+                .setConfig({ format: _this.config.y2Axis.format });
+            _this.titletElement = new ChartElement_1.TitleElement(_this).setLayout(_this.canvas.title)
+                .setStyle(_this.styles.title)
+                .setConfig({
+                value: _this.config.title.value
+            });
+            _this.xTitleElement = new ChartElement_1.TitleElement(_this).setLayout(_this.canvas.xTitle)
+                .setStyle(_this.styles.xTitle)
+                .setConfig({
+                value: _this.config.xTitle.value
+            });
+            _this.yTitleElement = new ChartElement_1.TitleElement(_this).setLayout(_this.canvas.yTitle)
+                .setStyle(_this.styles.yTitle)
+                .setConfig({
+                value: _this.config.yTitle.value
+            });
+            _this.y2TitleElement = new ChartElement_1.TitleElement(_this).setLayout(_this.canvas.y2Title)
+                .setStyle(_this.styles.y2Title)
+                .setConfig({
+                value: _this.config.y2Title.value
+            });
+            _this.legendElement = new ChartElement_1.LegendElement(_this).setLayout(_this.canvas.legend)
+                .setStyle(_this.styles.legend)
+                .setLegendDataFn(function () { return _this.getMeasures().filter(function (m) { return m.type === "legend"; }); });
             return _this;
         }
         CompareChart.prototype.addMeasure = function (nm) {
@@ -203,76 +247,75 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
                 rightWidth: 0,
                 rightHeight: 0
             };
-            if (c.legend.position() === "right") {
-                legendLayout.rightHeight = c.legend.h();
-                legendLayout.rightWidth = c.legend.w();
+            if (c.legend.getPosition() === "right") {
+                legendLayout.rightHeight = c.legend.getH();
+                legendLayout.rightWidth = c.legend.getW();
             }
-            if (c.legend.position() === "bottom") {
-                legendLayout.bottomHeight = c.legend.h();
-                legendLayout.bottomWidth = c.legend.w();
+            if (c.legend.getPosition() === "bottom") {
+                legendLayout.bottomHeight = c.legend.getH();
+                legendLayout.bottomWidth = c.legend.getW();
             }
-            this.wrapper.x(0);
-            this.wrapper.y(0);
-            this.wrapper.w(this.config.width);
-            this.wrapper.h(this.config.height);
+            this.wrapper.setX(0);
+            this.wrapper.setY(0);
+            this.wrapper.setW(this.config.width);
+            this.wrapper.setH(this.config.height);
             if (this.config.title.visiable) {
-                c.title.x(0);
-                c.title.y(0);
-                this.canvas.title.w(this.wrapper.w());
-                this.canvas.title.h(this.stringRect(this.config.title).height);
+                c.title.setX(0);
+                c.title.setY(0);
+                this.canvas.title.setW(this.wrapper.getW());
+                this.canvas.title.setH(this.stringRect(this.config.title).height);
             }
             if (con.xTitle.visiable) {
-                c.xTitle.w(this.stringRect(con.xTitle).width);
-                c.xTitle.h(this.stringRect(con.xTitle).height);
-                c.xTitle.x(0);
-                c.xTitle.y(this.wrapper.h() - legendLayout.bottomHeight - c.xTitle.h());
+                // c.xTitle.setW(this.stringRect(con.xTitle).width)
+                c.xTitle.setH(this.stringRect(con.xTitle).height);
+                //c.xTitle.setX(0)
+                c.xTitle.setY(this.wrapper.getH() - legendLayout.bottomHeight - c.xTitle.getH());
             }
-            c.xAxis.h(this.getXHeight());
-            c.xAxis.y(this.wrapper.h() - c.xTitle.h() - c.xAxis.h() - legendLayout.bottomHeight);
-            c.chart.y(c.title.h());
-            c.chart.h(this.wrapper.h() - c.title.h() - c.xAxis.h() - c.xTitle.h() - legendLayout.bottomHeight);
-            ////calculate x 
+            c.xAxis.setH(this.getXHeight());
+            c.xAxis.setY(this.wrapper.getH() - c.xTitle.getH() - c.xAxis.getH() - legendLayout.bottomHeight);
+            c.chart.setY(c.title.getH());
+            c.chart.setH(this.wrapper.getH() - c.title.getH() - c.xAxis.getH() - c.xTitle.getH() - legendLayout.bottomHeight);
+            ////calculate setX 
             if (con.yTitle.visiable) {
-                c.yTitle.x(0);
-                c.yTitle.y(0);
-                c.yTitle.h(this.stringRect(con.yTitle).height);
-                c.yTitle.w(this.stringRect(con.yTitle).width);
+                c.yTitle.setX(0);
+                c.yTitle.setY(0);
+                // c.yTitle.setH(this.stringRect(con.yTitle).height)
+                c.yTitle.setW(this.stringRect(con.yTitle).width);
             }
             else {
-                c.yTitle.x(0);
-                c.yTitle.y(0);
-                c.yTitle.h(0);
-                c.yTitle.w(0);
+                c.yTitle.setX(0);
+                c.yTitle.setY(0);
+                // c.yTitle.setH(0)
+                c.yTitle.setW(0);
             }
-            c.yAxis.w(this.getYWidth());
-            c.yAxis.h(c.chart.h());
-            c.yAxis.x(c.yTitle.w() + c.yAxis.w());
-            c.yAxis.y(c.title.h());
-            c.y2Title.w(this.stringRect(con.y2Title).width);
-            c.y2Title.h(this.stringRect(con.y2Title).height);
+            c.yAxis.setW(this.getYWidth());
+            c.yAxis.setH(c.chart.getH());
+            c.yAxis.setX(c.yTitle.getW() + c.yAxis.getW());
+            c.yAxis.setY(c.title.getH());
+            c.y2Title.setW(this.stringRect(con.y2Title).width);
+            //c.y2Title.setH(this.stringRect(con.y2Title).height)
             if (con.y2Title.visiable) {
-                c.y2Axis.w(this.getY2Width());
-                c.y2Axis.h(c.chart.h());
-                c.y2Axis.x(this.wrapper.w() - c.y2Axis.w() - c.y2Title.w());
-                c.y2Axis.y(c.title.h());
+                c.y2Axis.setW(this.getY2Width());
+                c.y2Axis.setH(c.chart.getH());
+                c.y2Axis.setX(this.wrapper.getW() - c.y2Axis.getW() - c.y2Title.getW());
+                c.y2Axis.setY(c.title.getH());
             }
             else {
-                c.y2Axis.w(0);
-                c.y2Axis.h(0);
-                c.y2Axis.x(this.wrapper.w() - c.y2Axis.w() - c.y2Title.w());
-                c.y2Axis.y(c.title.h());
+                c.y2Axis.setW(0);
+                c.y2Axis.setH(0);
+                c.y2Axis.setX(this.wrapper.getW() - c.y2Axis.getW() - c.y2Title.getW());
+                c.y2Axis.setY(c.title.getH());
             }
-            c.y2Title.x(this.wrapper.w() - c.y2Title.w() - legendLayout.rightWidth);
-            c.y2Title.y(c.title.h());
-            c.y2Title.y();
-            c.chart.x(c.yAxis.w() + c.yTitle.w());
-            c.chart.w(this.wrapper.w() - c.yTitle.w() - c.yAxis.w() - c.y2Axis.w() - c.y2Title.w() - legendLayout.rightWidth);
-            c.xAxis.x(c.yTitle.w() + c.yAxis.w());
-            c.xAxis.w(c.chart.w());
-            c.xTitle.x(c.yTitle.w() + c.yAxis.w());
-            c.y2Title.h(c.chart.h());
-            c.yTitle.h(c.chart.h());
-            c.xTitle.w(c.chart.w());
+            c.y2Title.setX(this.wrapper.getW() - c.y2Title.getW() - legendLayout.rightWidth);
+            c.y2Title.setY(c.title.getH());
+            c.chart.setX(c.yAxis.getW() + c.yTitle.getW());
+            c.chart.setW(this.wrapper.getW() - c.yTitle.getW() - c.yAxis.getW() - c.y2Axis.getW() - c.y2Title.getW() - legendLayout.rightWidth);
+            c.xAxis.setX(c.yTitle.getW() + c.yAxis.getW());
+            c.xAxis.setW(c.chart.getW());
+            c.xTitle.setX(c.yTitle.getW() + c.yAxis.getW());
+            c.y2Title.setH(c.chart.getH());
+            c.yTitle.setH(c.chart.getH());
+            c.xTitle.setW(c.chart.getW());
         };
         CompareChart.prototype.getChartLayout = function () {
             return this.canvas.chart;
@@ -283,13 +326,14 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
             var d = this.getMeasures().filter(function (e) { return e.ref !== "y2"; })
                 .forEach(function (e) {
                 e.pluckDatas("y").forEach(function (s) {
-                    var _w = _this.stringRectCache(chart.config.yAxis.format(s), null, 10).width;
+                    var _w = _this.stringRectCache(_this.yAxisElement.config.format(s), null, 10).width;
                     w = w > _w ? w : _w, ss = s;
                 });
             });
             if (w > 70) {
-                this.ctx("yAxisClass", "rotation");
-                w = this.stringRectCache(chart.config.yAxis.format(ss), chart.config.yAxis.class + " " + this.ctx("yAxisClass"), 10).width;
+                this.yAxisElement.style.setClass(chart.config.yAxis.class + " rotation");
+                //this.ctx("yAxisClass","rotation")
+                w = this.stringRectCache(this.yAxisElement.config.format(ss), chart.config.yAxis.class + " rotation", 10).width;
             }
             return w;
         };
@@ -299,15 +343,15 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
             var d = this.getMeasures().filter(function (e) { return e.ref === "y2"; })
                 .forEach(function (e) {
                 e.pluckDatas("y").forEach(function (s) {
-                    var _w = _this.stringRectCache(chart.config.y2Axis.format(s), null, 10).width;
+                    var _w = _this.stringRectCache(_this.y2AxisElement.config.format(s), null, 10).width;
                     w = w > _w ? w : _w, ss = s;
                 });
             });
             if (w > 70) {
                 // console.log("before", w)
-                this.ctx("y2AxisClass", "rotation");
+                this.y2AxisElement.style.setClass(chart.config.y2Axis.class + " rotation");
                 //chart.config.yAxis.class+=" rotation"
-                w = this.stringRectCache(chart.config.yAxis.format(ss), chart.config.y2Axis.class + " " + this.ctx("y2AxisClass"), 10).width;
+                w = this.stringRectCache(this.y2AxisElement.config.format(ss), chart.config.y2Axis.class + " rotation", 10).width;
                 //console.log("after", w)
             }
             return w;
@@ -317,14 +361,15 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
             var w = 0, h = 0, chart = this, ss = 0;
             var d = this.getMeasures().forEach(function (e) {
                 e.pluckDatas("x").forEach(function (s) {
-                    var _w = _this.stringRectCache(chart.config.xAxis.format(s), null, 10).width;
+                    var _w = _this.stringRectCache(_this.xAxisElement.config.format(s), null, 10).width;
                     w = w > _w ? w : _w, ss = s, h = _this.stringRectCache(chart.config.xAxis.format(s), null, 10).height;
                 });
             });
             if (w > 40) {
-                this.ctx("xAxisClass", "rotation");
+                //this.ctx("xAxisClass","rotation")
                 // chart.config.xAxis.class+=" rotation"
-                h = this.stringRectCache(chart.config.xAxis.format(ss), chart.config.xAxis.class + " " + this.ctx("xAxisClass"), 10).height;
+                this.xAxisElement.style.setClass(chart.config.xAxis.class + " rotation");
+                h = this.stringRectCache(this.xAxisElement.config.format(ss), chart.config.xAxis.class + " rotation", 10).height;
             }
             return h;
         };
@@ -341,19 +386,19 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
             if (this.config.legend.visiable) {
                 if (this.config.width > this.config.height * 1.2) {
                     this.config.legend._position = "right";
-                    this.canvas.legend.position("right");
-                    this.canvas.legend.w(this.config.width * 0.2);
-                    this.canvas.legend.h(this.config.height - this.stringRectCache(this.config.title.value, this.config.title.class).height - this.stringRectCache(this.config.xTitle.value, this.config.xTitle.class).height);
-                    this.canvas.legend.x(this.config.width - this.canvas.legend.w());
-                    this.canvas.legend.y(this.stringRectCache(this.config.title.value, this.config.title.class).height);
+                    this.canvas.legend.setPosition("right");
+                    this.canvas.legend.setW(this.config.width * 0.2);
+                    this.canvas.legend.setH(this.config.height - this.stringRectCache(this.config.title.value, this.config.title.class).height - this.stringRectCache(this.config.xTitle.value, this.config.xTitle.class).height);
+                    this.canvas.legend.setX(this.config.width - this.canvas.legend.getW());
+                    this.canvas.legend.setY(this.stringRectCache(this.config.title.value, this.config.title.class).height);
                 }
                 else {
                     this.config.legend._position = "bottom";
-                    this.canvas.legend.position("bottom");
-                    this.canvas.legend.w(this.config.width);
-                    this.canvas.legend.h(Math.ceil(ms.filter(function (m) { return m.type === "legend"; }).length * 100 / this.config.width) * 25);
-                    this.canvas.legend.x(0);
-                    this.canvas.legend.y(this.config.height - this.canvas.legend.h());
+                    this.canvas.legend.setPosition("bottom");
+                    this.canvas.legend.setW(this.config.width);
+                    this.canvas.legend.setH(Math.ceil(ms.filter(function (m) { return m.type === "legend"; }).length * 100 / this.config.width) * 25);
+                    this.canvas.legend.setX(0);
+                    this.canvas.legend.setY(this.config.height - this.canvas.legend.getH());
                 }
             }
             if (ms.filter(function (e) { return e.type == "legend"; }).length === 0) {
@@ -366,7 +411,7 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
         CompareChart.prototype.maxBarsNum = function () {
             var bars = this.getMeasures().filter(function (b) { return b.type === "bar"; });
             var n = 1;
-            var bg = _.groupBy(bars.map(function (b) { return b.data(); })
+            var bg = _.groupBy(bars.map(function (b) { return b.getData(); })
                 .reduce(function (b1, b2) { return b1.concat(b2); }), "x");
             _.each(bg, function (v, k) {
                 n = n > v.length ? n : v.length;
@@ -376,7 +421,7 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
         CompareChart.prototype.barNum = function (v) {
             var bars = this.getMeasures().filter(function (b) { return b.type === "bar"; });
             var num = 0;
-            _.each(bars.map(function (b) { return b.data(); })
+            _.each(bars.map(function (b) { return b.getData(); })
                 .reduce(function (b1, b2) { return b1.concat(b2); }), function (d) {
                 if (d.x == v) {
                     num++;
@@ -396,157 +441,4 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "lib/
     }(Chart_1.Chart));
     exports.CompareChart = CompareChart;
 });
-// let titleRender = (t?:string) => {
-//     if(!t||t==="html"){
-//         return (e:IChartElement)=>{
-//             let div = d3.select(e.chart.wrapper.node()).append("div")
-//             .style("position", "absolute")
-//             .style("left", e.layout.x() + "px")
-//             .style("top", e.layout.y() + "px")
-//             .style("height", e.layout.h() + "px")
-//             .style("width", e.layout.w() + "px")
-//             .classed(e.data.class, true)
-//         div.append("p").text(e.data.value)  
-//         }
-//     }
-// }
-// let axisRender =(t?:string)=>{
-//     if(!t || t==="svg"){
-//         return (e: CompareChartElement) => {
-//         let d = d3.select(e.chart.wrapper.node()).append("svg")
-//             .style("position", "absolute")
-//             .style("left", e.layout.x() + "px")
-//             .style("top", e.layout.y() + "px")
-//             .style("height", e.layout.h() + "px")
-//             .style("width", e.layout.w() + "px")
-//         let axis = null;
-//         if (e.data === "left") {
-//             let scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y", true)).range([0, e.layout.h()])
-//             axis = d3.axisLeft(scale)
-//             d.style("left", e.layout.x() - e.layout.w() + "px")
-//             d.style("width", e.layout.w() + 2 + "px")
-//             d.append("g").style("transform", "translate(" + (e.layout.w()) + "px,0px)").call(axis)
-//                 //d.call(axis)
-//         }
-//         if (e.data === "right") {
-//             let scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "y2", true)).range([0, e.layout.h()])
-//             axis = d3.axisRight(scale)
-//             d.call(axis)
-//         }
-//         if (e.data === "bottom") {
-//             let scale = d3.scaleLinear().domain(e.chart.getDomain(e.chart.getMeasures(), "x")).range([0, e.layout.w()])
-//             axis = d3.axisBottom(scale)
-//             d.call(axis)
-//         }
-// }
-//     }
-// }
-// let chartRender =(t?:string)=>{
-//     if(!t || t==="svg"){
-//         return (e:CompareChartElement)=>{
-//             let xScale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"x"),[0,e.layout.w()])
-//             let yScale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"y",true),[0,e.layout.h()])
-//             let y2Scale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"y2",true),[0,e.layout.h()])
-//             let c = d3.select(e.chart.wrapper.node()).append("svg")
-//                 .style("position", "absolute")
-//                 .style("left", e.layout.x() + "px")
-//                 .style("top", e.layout.y() + "px")
-//                 .style("height", e.layout.h() + "px")
-//                 .style("width", e.layout.w() + "px")
-//             e.layout.node(c.node());
-//             let d = [].concat(e.data)
-//             d.forEach((v: CompareChartMeasure, k) => {
-//                 switch(v.type){
-//                     case "line":
-//                         lineRender(xScale,yScale,e.layout.node(),v.data(),v.style);
-//                         break;
-//                     case "circle":
-//                         circleRender(xScale,yScale,e.layout.node(),v.data(),v.style);
-//                 }
-//             })
-//         }
-//     }
-//     if(t==="canvas"){
-//         return (e:CompareChartElement)=>{
-//             let xScale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"x"),[0,e.layout.w()])
-//             let yScale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"y",true),[0,e.layout.h()])
-//             let y2Scale=e.chart.getScale(e.chart.getDomain(e.chart.getMeasures(),"y2",true),[0,e.layout.h()])
-//             let c = d3.select(e.chart.wrapper.node()).append("canvas")
-//                 .style("position", "absolute")
-//                 .style("left", e.layout.x() + "px")
-//                 .style("top", e.layout.y() + "px")
-//                 .style("height", e.layout.h() + "px")
-//                 .style("width", e.layout.w() + "px")
-//                 .attr("height",e.layout.h())
-//                 .attr("width",e.layout.w())
-//             e.layout.node(this.wrapper());
-//             let d=[].concat(e.data)
-//             d.forEach((v:CompareChartMeasure,k)=>{
-//                  switch(v.type){
-//                     case "line":
-//                         lineRenderCanvas(xScale,yScale,e.layout.node(),v.data(),v.style);
-//                         break;
-//                     case "circle":
-//                         circleRender(xScale,yScale,e.layout.node(),v.data(),v.style);
-//                 }
-//             })
-//         }
-//     }
-// }
-// let pathGen=(xScale,yScale,ds,closed?)=>{
-//         if (ds.length < 1) return "M0,0";
-//         var lineString = "";
-//         var isStartPoint = true;
-//         for (var i = 0; i < ds.length; ++i) {
-//             if (isStartPoint) {
-//                 if (isNaN(ds[i].y)) {
-//                     isStartPoint = true;
-//                     continue;
-//                 } else {
-//                     lineString += "M" + xScale(ds[i].x) + "," + yScale(ds[i].y);
-//                     isStartPoint = false;
-//                 }
-//             } else {
-//                 if (isNaN(ds[i].y)) {
-//                     isStartPoint = true;
-//                     continue;
-//                 } else {
-//                     lineString += "L" + xScale(ds[i].x) + "," + yScale(ds[i].y);
-//                 }
-//             }
-//         }
-//         if (closed){
-//             lineString+="Z"
-//         }
-//         return lineString;
-// }
-// let lineRender=(xScale,yScale,node,ds,style:Style,ctx?)=>{
-//     d3.select(node).append("path").attr("d",pathGen(xScale,yScale,ds,false))
-//                                         .style("stroke",style.color)
-//                                         .style("stroke-width",style.lineWidth)
-//                                         .style("fill","none");
-// }
-// let lineRenderCanvas=(xScale,yScale,canvas,ds,style:Style,ctx?)=>{
-//         if (canvas.getContext){
-//         var ctx = canvas.getContext('2d')
-//         ctx.strokeStyle =style.color
-//         ctx.lineWidth = style.lineWidth
-//         ctx.fillStyle =style.fillColor
-//         let p= new window.Path2D(pathGen(xScale,yScale,ds,false))
-//         ctx.stroke(p)
-//         ctx.save();
-// }
-// }
-// let circleRender=(xScale,yScale,node,ds,style:Style,ctx?)=>{
-//      _.each([].concat(ds),(d)=>{
-//         d3.select(node).append("ellipse").attr("cx",xScale(d.x))
-//                                         .attr("cy",yScale(d.y))
-//                                         .attr("rx",style.rx)
-//                                         .attr("ry",style.ry)
-//                                         .style("fill",style.fillColor);     
-//      })
-// }
-// let barRender=(xScale,yScale,node,ds,style:Style,ctx?)=>{
-//     _.each()
-// } 
 //# sourceMappingURL=CompareChart.js.map

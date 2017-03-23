@@ -25,6 +25,28 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
         Measure.prototype.pluckDatas = function (type) {
             return _.pluck(this.dataset, type);
         };
+        Measure.prototype.toSymbolies = function () {
+        };
+        Measure.prototype.setID = function (id) {
+            if (id != undefined) {
+                this.id = id;
+            }
+            return this;
+        };
+        Measure.prototype.setData = function (ds) {
+            if (ds != undefined) {
+                this.dataset = ds;
+            }
+            return this;
+        };
+        Measure.prototype.getData = function () {
+            return this.dataset;
+        };
+        Measure.prototype.getID = function () {
+            return this.id;
+        };
+        Measure.prototype.removeSymbolies = function () {
+        };
         return Measure;
     }(Evented_1.Evented));
     exports.Measure = Measure;
@@ -34,17 +56,9 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
             var _this = _super.call(this, id, name, type) || this;
             _this.ref = "y1";
             _this.ref = ref || _this.ref;
-            _this.data(ds);
+            _this.setData(ds);
             return _this;
         }
-        CompareChartMeasure.prototype.data = function (ds) {
-            if (ds) {
-                this.dataset = ds;
-                this.fire("change", ds);
-                return this;
-            }
-            return this.dataset;
-        };
         CompareChartMeasure.prototype.node = function (n) {
             if (n) {
                 this._node = n;

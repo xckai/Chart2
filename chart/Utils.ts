@@ -4,6 +4,7 @@ declare var window:any;
 import { IChartElement } from "./Chart"
 import { CompareChartElement } from "./CompareChart"
 import { CompareChartMeasure } from "./Measure"
+import {Evented} from "./Evented"
 export module Util{
 export function isEndWith(s:any,ed:string){
     let ss= s.toString();
@@ -136,21 +137,24 @@ export function enableAutoResize(dom:any,fn){
         }
     }
 }
-export class Style{
-    constructor(color ?,stroke ?,fillColor ?,opacity ?){
-        this.color=color||this.color
-        this.stroke =stroke||this.stroke;
-        this.fillColor =fillColor||this.fillColor
-        this.opacity =opacity||this.opacity
+export class Style extends Evented{
+    constructor(color ?,stroke ?,fillColor ?,opacity ?,cls?){
+        super()
+        this._color=color||this._color
+        this._stroke =stroke||this._stroke;
+        this._fillColor =fillColor||this._fillColor
+        this._opacity =opacity||this._opacity
+        this._class=cls
     }
     private _font:any=14
-    color:string ="black"
-    stroke:number =1
-    fillColor:string ="black"
-    opacity:number =1
-    lineWidth:number=1
-    rx:number=2
-    ry:number=2
+    _color:string ="black"
+    _stroke:number =1
+    _fillColor:string ="black"
+    _opacity:number =1
+    _lineWidth:number=1
+    _rx:number=2
+    _ry:number=2
+    _visiable=true
     set font(f:any){
         if(!isNaN(f)){
             this._font=f;
@@ -166,10 +170,48 @@ export class Style{
     get font(){
         return this._font
     }
-    fontFamily:string="arial,sans-serif"
+    _fontFamily:string="arial,sans-serif"
+    _class:string
+    getColor(){
+        return this._color
+    }
+    getStroke(){
+        return this._stroke
+    }
+    getFillColor(){
+        return this._fillColor
+    }
+    getLineWidth(){
+        return this._lineWidth
+    }
+    getRx(){
+        return this._rx
+    }
+    getRy(){
+        return this._ry
+    }
+    getOpacity(){
+        return this._opacity
+    }
+    getClass(){
+        return this._class
+    }
+    setClass(c){
+        this._class=c
+        return this
+    }
+    setVisiable(v){
+        this._visiable=v
+        return this
+    }
+    getVisiable(){
+        return this._visiable
+    }
+
 }
-export class Layout{
+export class Layout extends Evented{
     constructor(render?){
+        super()
         if(render){
             this.render=render;
         }
@@ -179,25 +221,54 @@ export class Layout{
    private _h:number=0
    private _x:number=0
    private _y:number=0
-   private _p:"default"
-   private _node:HTMLElement
-    w(v?):any{
-        return v!==undefined? (this._w=v,this):this._w;
+   private _p:string
+   private _node:any
+    set(k,v){
+        let key= "_"+k
+        if(this[key]===v){
+          return this  
+        }
+        //console.log(this[key],v,this,new Error().stack)
+        this[key]=v
+        this.fire("change",{key,v})
+        return this
+    } 
+    setW(w){
+        return this.set("w",w)
     }
-    h(v?):any{
-        return v!==undefined?(this._h=v,this):this._h;
+    getW(){
+        return this._w
     }
-    node(v?):any{
-        return v!==undefined?(this._node=v,this):this._node;
+    setH(h){
+        return this.set("h",h)
     }
-    x(v?):any{
-        return v!==undefined? (this._x=v,this):this._x;
+    getH(){
+        return this._h
     }
-    y(v?):any{
-        return v!==undefined? (this._y=v,this):this._y;
+    setNode(n){
+        this._node=n
+        return this
     }
-    position(p?):any{
-        return p!==undefined? (this._p=p,this):this._p;
+    getNode(){
+        return this._node
+    }
+    setPosition(p){
+        return this.set("p",p)
+    }
+    getPosition(){
+        return this._p
+    }
+    setX(x){
+        return this.set("x",x)
+    }
+    getX(){
+        return this._x
+    }
+    setY(y){
+        return this.set("y",y)
+    }
+    getY(){
+        return this._y
     }
     
 }

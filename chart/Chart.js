@@ -65,8 +65,6 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
             return this.measures;
         };
         Chart.prototype.beforeDraw = function () {
-            this.config.height = document.getElementById(this.config.appendTo).clientHeight;
-            this.config.width = document.getElementById(this.config.appendTo).clientWidth;
         };
         Chart.prototype.calculateLayout = function () {
         };
@@ -75,17 +73,19 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
                 return false;
             }
             else {
-                if (this.wrapper.node()) {
-                    d3.select(this.wrapper.node())
+                if (this.wrapper.getNode()) {
+                    d3.select(this.wrapper.getNode())
                         .classed(this.config.class, true)
                         .style("position", "absolute");
                 }
                 else {
-                    this.wrapper.node(d3.select("#" + this.config.appendTo).append("div")
+                    this.wrapper.setNode(d3.select("#" + this.config.appendTo).append("div")
                         .classed(this.config.class, true)
                         .style("position", "absolute")
                         .node());
                 }
+                this.config.height = document.getElementById(this.config.appendTo).clientHeight;
+                this.config.width = document.getElementById(this.config.appendTo).clientWidth;
                 return true;
             }
         };
@@ -95,10 +95,12 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
             var _this = this;
             var chart = this;
             Utils_1.Util.enableAutoResize(document.getElementById(this.config.appendTo), function () {
+                _this.config.height = document.getElementById(_this.config.appendTo).clientHeight;
+                _this.config.width = document.getElementById(_this.config.appendTo).clientWidth;
                 _this.beforeDraw();
                 _this.checkData();
                 _this.calculateLayout();
-                _this._draw();
+                //this._draw()
             });
         };
         Chart.prototype._draw = function (ctx) {
@@ -116,7 +118,7 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
                 this.beforeDraw();
                 this.checkData();
                 this.calculateLayout();
-                this._draw();
+                this.fire("render");
                 this.endDraw();
             }
         };

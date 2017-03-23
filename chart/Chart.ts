@@ -17,6 +17,7 @@ export interface IChartElement {
     Parent():any
     ctx:any
 }
+
 export interface IChartConfig{
     class:string
     appendTo:string
@@ -72,8 +73,7 @@ export abstract class Chart extends Evented {
         return this.measures
     }
     beforeDraw() {
-        this.config.height=document.getElementById(this.config.appendTo).clientHeight
-        this.config.width = document.getElementById(this.config.appendTo).clientWidth
+     
     }
     calculateLayout() {
     }
@@ -81,17 +81,19 @@ export abstract class Chart extends Evented {
         if(d3.select("#"+this.config.appendTo).empty()){
             return false
         }else{
-            if(this.wrapper.node()){
+            if(this.wrapper.getNode()){
 
-                d3.select(this.wrapper.node())
+                d3.select(this.wrapper.getNode())
                             .classed(this.config.class, true)
                                             .style("position", "absolute")
             }else{
-                    this.wrapper.node(d3.select("#"+this.config.appendTo).append("div")
+                    this.wrapper.setNode(d3.select("#"+this.config.appendTo).append("div")
                                             .classed(this.config.class, true)
                                             .style("position", "absolute")
                                             .node())
             }
+            this.config.height=document.getElementById(this.config.appendTo).clientHeight
+            this.config.width = document.getElementById(this.config.appendTo).clientWidth
             return true
         }
     }
@@ -101,10 +103,12 @@ export abstract class Chart extends Evented {
     endDraw(){
         let chart=this
         Util.enableAutoResize(document.getElementById(this.config.appendTo),()=>{
+            this.config.height=document.getElementById(this.config.appendTo).clientHeight
+            this.config.width = document.getElementById(this.config.appendTo).clientWidth
             this.beforeDraw()
             this.checkData()
             this.calculateLayout()
-            this._draw()
+            //this._draw()
         })
     }
     _draw(ctx?){
@@ -122,7 +126,7 @@ export abstract class Chart extends Evented {
             this.beforeDraw()
             this.checkData()
             this.calculateLayout()
-            this._draw()
+            this.fire("render")
             this.endDraw()
         }
     }

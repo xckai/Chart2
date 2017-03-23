@@ -48,7 +48,7 @@ export class Evented{
         }
         return this;
     }
-    fire(t:string,obj:any){
+    fire(t:string,obj?:any){
         if(!this.events[t]){
             return this;
         }else{

@@ -18,24 +18,39 @@ export abstract class  Measure extends Evented {
     pluckDatas(type:string):any[]{
        return _.pluck(this.dataset,type);
     }
+    toSymbolies(){
+    }
+    setID(id){
+        if(id!=undefined){
+              this.id=id
+        }
+        return this
+    }
+    setData(ds){
+        if(ds!=undefined){
+             this.dataset=ds
+        }
+        return this
+    }
+    getData(){
+        return this.dataset
+    }
+    getID(){
+        return this.id
+    }
+    removeSymbolies(){
+        
+    }
 }
 
 export class CompareChartMeasure extends Measure {
     constructor(id?,name?,type?,ref?,ds?){
         super(id,name,type);
         this.ref=ref||this.ref;
-        this.data(ds)
+        this.setData(ds)
     }
     ref:string ="y1"
     _node:any
-    data(ds?){
-        if(ds){
-            this.dataset=ds;
-            this.fire("change",ds);
-            return this;
-        }
-        return this.dataset;
-    }
     node(n){
         if(n){
             this._node=n

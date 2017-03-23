@@ -1,4 +1,14 @@
-define(["require", "exports", "lib/d3", "lib/underscore"], function (require, exports, d3) {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function (require, exports, Evented_1, d3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Util;
@@ -139,21 +149,26 @@ define(["require", "exports", "lib/d3", "lib/underscore"], function (require, ex
         }
         Util.enableAutoResize = enableAutoResize;
     })(Util = exports.Util || (exports.Util = {}));
-    var Style = (function () {
-        function Style(color, stroke, fillColor, opacity) {
-            this._font = 14;
-            this.color = "black";
-            this.stroke = 1;
-            this.fillColor = "black";
-            this.opacity = 1;
-            this.lineWidth = 1;
-            this.rx = 2;
-            this.ry = 2;
-            this.fontFamily = "arial,sans-serif";
-            this.color = color || this.color;
-            this.stroke = stroke || this.stroke;
-            this.fillColor = fillColor || this.fillColor;
-            this.opacity = opacity || this.opacity;
+    var Style = (function (_super) {
+        __extends(Style, _super);
+        function Style(color, stroke, fillColor, opacity, cls) {
+            var _this = _super.call(this) || this;
+            _this._font = 14;
+            _this._color = "black";
+            _this._stroke = 1;
+            _this._fillColor = "black";
+            _this._opacity = 1;
+            _this._lineWidth = 1;
+            _this._rx = 2;
+            _this._ry = 2;
+            _this._visiable = true;
+            _this._fontFamily = "arial,sans-serif";
+            _this._color = color || _this._color;
+            _this._stroke = stroke || _this._stroke;
+            _this._fillColor = fillColor || _this._fillColor;
+            _this._opacity = opacity || _this._opacity;
+            _this._class = cls;
+            return _this;
         }
         Object.defineProperty(Style.prototype, "font", {
             get: function () {
@@ -174,40 +189,107 @@ define(["require", "exports", "lib/d3", "lib/underscore"], function (require, ex
             enumerable: true,
             configurable: true
         });
+        Style.prototype.getColor = function () {
+            return this._color;
+        };
+        Style.prototype.getStroke = function () {
+            return this._stroke;
+        };
+        Style.prototype.getFillColor = function () {
+            return this._fillColor;
+        };
+        Style.prototype.getLineWidth = function () {
+            return this._lineWidth;
+        };
+        Style.prototype.getRx = function () {
+            return this._rx;
+        };
+        Style.prototype.getRy = function () {
+            return this._ry;
+        };
+        Style.prototype.getOpacity = function () {
+            return this._opacity;
+        };
+        Style.prototype.getClass = function () {
+            return this._class;
+        };
+        Style.prototype.setClass = function (c) {
+            this._class = c;
+            return this;
+        };
+        Style.prototype.setVisiable = function (v) {
+            this._visiable = v;
+            return this;
+        };
+        Style.prototype.getVisiable = function () {
+            return this._visiable;
+        };
         return Style;
-    }());
+    }(Evented_1.Evented));
     exports.Style = Style;
-    var Layout = (function () {
+    var Layout = (function (_super) {
+        __extends(Layout, _super);
         function Layout(render) {
-            this.render = "html";
-            this._w = 0;
-            this._h = 0;
-            this._x = 0;
-            this._y = 0;
+            var _this = _super.call(this) || this;
+            _this.render = "html";
+            _this._w = 0;
+            _this._h = 0;
+            _this._x = 0;
+            _this._y = 0;
             if (render) {
-                this.render = render;
+                _this.render = render;
             }
+            return _this;
         }
-        Layout.prototype.w = function (v) {
-            return v !== undefined ? (this._w = v, this) : this._w;
+        Layout.prototype.set = function (k, v) {
+            var key = "_" + k;
+            if (this[key] === v) {
+                return this;
+            }
+            //console.log(this[key],v,this,new Error().stack)
+            this[key] = v;
+            this.fire("change", { key: key, v: v });
+            return this;
         };
-        Layout.prototype.h = function (v) {
-            return v !== undefined ? (this._h = v, this) : this._h;
+        Layout.prototype.setW = function (w) {
+            return this.set("w", w);
         };
-        Layout.prototype.node = function (v) {
-            return v !== undefined ? (this._node = v, this) : this._node;
+        Layout.prototype.getW = function () {
+            return this._w;
         };
-        Layout.prototype.x = function (v) {
-            return v !== undefined ? (this._x = v, this) : this._x;
+        Layout.prototype.setH = function (h) {
+            return this.set("h", h);
         };
-        Layout.prototype.y = function (v) {
-            return v !== undefined ? (this._y = v, this) : this._y;
+        Layout.prototype.getH = function () {
+            return this._h;
         };
-        Layout.prototype.position = function (p) {
-            return p !== undefined ? (this._p = p, this) : this._p;
+        Layout.prototype.setNode = function (n) {
+            this._node = n;
+            return this;
+        };
+        Layout.prototype.getNode = function () {
+            return this._node;
+        };
+        Layout.prototype.setPosition = function (p) {
+            return this.set("p", p);
+        };
+        Layout.prototype.getPosition = function () {
+            return this._p;
+        };
+        Layout.prototype.setX = function (x) {
+            return this.set("x", x);
+        };
+        Layout.prototype.getX = function () {
+            return this._x;
+        };
+        Layout.prototype.setY = function (y) {
+            return this.set("y", y);
+        };
+        Layout.prototype.getY = function () {
+            return this._y;
         };
         return Layout;
-    }());
+    }(Evented_1.Evented));
     exports.Layout = Layout;
     exports.pathGen = function (xScale, yScale, ds, closed) {
         if (ds.length < 1)
