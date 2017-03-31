@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function (require, exports, Evented_1, d3) {
+define(["require", "exports", "./Evented", "lib/underscore"], function (require, exports, Evented_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Util;
@@ -94,6 +94,23 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
             };
         }
         Util.CacheAble = CacheAble;
+        function curry(f) {
+            var arity = f.length;
+            return function f1() {
+                var args = Array.prototype.slice.call(arguments, 0);
+                if (args.length < arity) {
+                    var f2 = function () {
+                        var args2 = Array.prototype.slice.call(arguments, 0); // parameters of returned curry func
+                        return f1.apply(null, args.concat(args2)); // compose the parameters for origin func f
+                    };
+                    return f2;
+                }
+                else {
+                    return f.apply(null, args); //all parameters are provided call the origin function
+                }
+            };
+        }
+        Util.curry = curry;
         function arguments2Array(args) {
             var r = [];
             for (var i = 0; i < args.length; ++i) {
@@ -151,78 +168,171 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
     })(Util = exports.Util || (exports.Util = {}));
     var Style = (function (_super) {
         __extends(Style, _super);
-        function Style(color, stroke, fillColor, opacity, cls) {
+        function Style(stroke, fillColor, opacity, width, dashArray) {
             var _this = _super.call(this) || this;
-            _this._font = 14;
-            _this._color = "black";
-            _this._stroke = 1;
-            _this._fillColor = "black";
-            _this._opacity = 1;
-            _this._lineWidth = 1;
-            _this._rx = 2;
-            _this._ry = 2;
-            _this._visiable = true;
+            _this._d = [];
             _this._fontFamily = "arial,sans-serif";
-            _this._color = color || _this._color;
-            _this._stroke = stroke || _this._stroke;
-            _this._fillColor = fillColor || _this._fillColor;
-            _this._opacity = opacity || _this._opacity;
-            _this._class = cls;
+            _this.setStroke(stroke || "black");
+            _this.setFillColor(fillColor || "black");
+            _this.setOpacity(opacity || 1);
+            _this.setLineWidth(width || 2);
+            _this.setDashArray(dashArray || "");
             return _this;
+            // this._stroke =stroke||this._stroke;
+            // this._fillColor =fillColor||this._fillColor
+            // this._opacity =opacity||this._opacity
+            // this._lineWidth=width||this._lineWidth
+            // this._dashArray=dashArray||this._dashArray
         }
-        Object.defineProperty(Style.prototype, "font", {
-            get: function () {
-                return this._font;
-            },
-            set: function (f) {
-                if (!isNaN(f)) {
-                    this._font = f;
-                }
-                if (Util.isEndWith(f, "px")) {
-                    this._font = parseFloat(f);
-                }
-                if (Util.isEndWith(f, "em") || Util.isEndWith(f, "rem")) {
-                    var font = window.getComputedStyle(document.body).getPropertyValue('font-size') || 16;
-                    this._font = parseFloat(f) * parseFloat(font);
-                }
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Style.prototype.getColor = function () {
-            return this._color;
+        Style.prototype._get = function (key, ns) {
+            if (ns) {
+                return _.findWhere(this._d, { name: ns })[key];
+            }
+            var v = "";
+            this._d.forEach(function (d) {
+                v = d[key] || v;
+            });
+            return v;
+        };
+        Style.prototype._set = function (k, v, namespace) {
+            var name = namespace || "default";
+            if (_.some(this._d, { name: name })) {
+                var obj = _.findWhere(this._d, { name: name });
+                obj[k] = v;
+            }
+            else {
+                var obj = { name: name };
+                obj[k] = v;
+                this._d.push(obj);
+            }
+            this.fire("change");
+            return this;
+        };
+        // _temp={}
+        // ctx(s){return s}
+        // private _font:any=14
+        // _stroke:string ="black"
+        // _fillColor:string ="black"
+        // _opacity:number =1
+        // _lineWidth:number=1
+        // _rx:number=2
+        // _ry:number=2
+        // _visiable=true
+        // _dashArray=""
+        // set font(f:any){
+        //     if(!isNaN(f)){
+        //         this._font=f;
+        //     }
+        //     if(Util.isEndWith(f,"px")){
+        //         this._font=parseFloat(f);
+        //     }
+        //     if(Util.isEndWith(f,"em")||Util.isEndWith(f,"rem")){
+        //         let font=window.getComputedStyle(document.body).getPropertyValue('font-size')||16
+        //         this._font=parseFloat(f) * parseFloat(font)
+        //     }
+        //     this.fire("change")
+        // }
+        // get font(){
+        //     return this._font
+        // }
+        Style.prototype.equal = function (s) {
+            return this._get("stroke", "default") == s._get("stroke", "default") && this._get("line-width", "default") == s._get("line-width", "default") && this._get("opacity", "default") == s._get("opacity", "default");
         };
         Style.prototype.getStroke = function () {
-            return this._stroke;
+            return this._get("stroke");
         };
         Style.prototype.getFillColor = function () {
-            return this._fillColor;
+            return this._get("fill-color");
         };
         Style.prototype.getLineWidth = function () {
-            return this._lineWidth;
+            return this._get("line-width");
         };
         Style.prototype.getRx = function () {
-            return this._rx;
-        };
-        Style.prototype.getRy = function () {
-            return this._ry;
-        };
-        Style.prototype.getOpacity = function () {
-            return this._opacity;
+            return this._get("rx");
         };
         Style.prototype.getClass = function () {
-            return this._class;
+            return this._get("class");
         };
-        Style.prototype.setClass = function (c) {
-            this._class = c;
-            return this;
+        Style.prototype.getRy = function () {
+            return this._get("ry");
         };
-        Style.prototype.setVisiable = function (v) {
-            this._visiable = v;
-            return this;
+        Style.prototype.getOpacity = function () {
+            return this._get("opacity");
         };
         Style.prototype.getVisiable = function () {
-            return this._visiable;
+            return this._get("visiable");
+        };
+        Style.prototype.getDashArray = function () {
+            return this._get("dash-array");
+        };
+        Style.prototype.setFillColor = function (c, ns) {
+            return this._set("fill-color", c, ns);
+        };
+        Style.prototype.setDashArray = function (d, ns) {
+            return this._set("dash-array", d, ns);
+        };
+        Style.prototype.setClass = function (d, ns) {
+            return this._set("class", d, ns);
+        };
+        Style.prototype.setVisiable = function (d, ns) {
+            return this._set("visiable", d, ns);
+        };
+        Style.prototype.setLineWidth = function (d, ns) {
+            return this._set("line-width", d, ns);
+        };
+        Style.prototype.setColor = function (d, ns) {
+            return this._set("color", d, ns);
+        };
+        Style.prototype.setStroke = function (d, ns) {
+            return this._set("stroke", d, ns);
+        };
+        Style.prototype.setOpacity = function (d, ns) {
+            return this._set("opacity", d, ns);
+        };
+        // setDefaultFillColor(f){
+        //     this._fillColor=f
+        //     this.fire("change")
+        //     return this
+        // }
+        // setDefaultClass(c){
+        //     this._class=c
+        //     return this
+        // }
+        // setDefaultVisiable(v){
+        //     this._visiable=v
+        //     this.fire("change")
+        //     return this
+        // }
+        // setDefaultDashArray(a){
+        //     this._dashArray=a
+        //     this.fire("change")
+        // }
+        // setDefaultLineWidth(d){
+        //     this._lineWidth=d
+        //     this.fire("change")
+        // }
+        // setDefaultStroke(s){
+        //     this._stroke=s
+        //     this.fire("change")
+        // }
+        // setDefaultOpacity(o){
+        //     this._opacity=o
+        //     this.fire("change")
+        // }
+        Style.prototype.reset = function (ns) {
+            var nd = [];
+            _.each(this._d, function (d) {
+                if (d["name"] != ns) {
+                    nd.push(d);
+                }
+            });
+            this._d = nd;
+            this.fire("change");
+            return this;
+        };
+        Style.prototype.clone = function (s) {
+            this._d = JSON.parse(JSON.stringify(s._d));
+            this.fire("change");
         };
         return Style;
     }(Evented_1.Evented));
@@ -292,7 +402,7 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
     }(Evented_1.Evented));
     exports.Layout = Layout;
     exports.pathGen = function (xScale, yScale, ds, closed) {
-        if (ds.length < 1)
+        if (ds.length < 2)
             return "M0,0";
         var lineString = "";
         var isStartPoint = true;
@@ -322,65 +432,57 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
         }
         return lineString;
     };
-    var HTMLRender = (function () {
-        function HTMLRender() {
-        }
-        HTMLRender.prototype.titleRender = function (e) {
-            var div = e.layout.node() ? d3.select(e.layout.node()) : d3.select(e.chart.wrapper.node()).append("div");
-            div.style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px");
-            e.layout.node(div.node());
-            div.node().innerHTML = "";
-            div.append("p").classed(e.data.class, true).text(e.data.value);
-        };
-        HTMLRender.prototype.axisRender = function (e, domain, position) {
-        };
-        HTMLRender.prototype.chartRender = function (e) {
-        };
-        HTMLRender.prototype.legendRender = function (e) {
-            var div = e.layout.node() ? d3.select(e.layout.node()) : d3.select(e.chart.wrapper.node()).append("div");
-            div.style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px")
-                .classed("legend", true);
-            e.layout.node(div.node());
-            div.node().innerHTML = "";
-            div.append("ul").selectAll("li").data(e.data).enter().append("li").append("p").text("hah");
-        };
-        return HTMLRender;
-    }());
-    exports.HTMLRender = HTMLRender;
-    var CanvasRender = (function () {
-        function CanvasRender() {
-        }
-        CanvasRender.prototype.titleRender = function (e) {
-            var div = d3.select(e.chart.wrapper.node()).append("div")
-                .style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px");
-            div.append("p").classed(e.data.class, true).text(e.data.value);
-        };
-        CanvasRender.prototype.axisRender = function (e, domain, position) {
-            var d = d3.select(e.chart.wrapper.node()).append("div")
-                .style("position", "absolute")
-                .style("left", e.layout.x() + "px")
-                .style("top", e.layout.y() + "px")
-                .style("height", e.layout.h() + "px")
-                .style("width", e.layout.w() + "px");
-        };
-        CanvasRender.prototype.chartRender = function (e) {
-        };
-        CanvasRender.prototype.legendRender = function (e) {
-        };
-        return CanvasRender;
-    }());
-    exports.CanvasRender = CanvasRender;
 });
+// export class HTMLRender implements IChartElementRender{
+//       titleRender(e:IChartElement){
+//         let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
+//             div.style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//         e.layout.node(div.node())
+//         div.node().innerHTML=""
+//         div.append("p").classed(e.data.class, true).text(e.data.value)  
+//     }
+//      axisRender(e:IChartElement,domain,position:string){
+//     }
+//     chartRender(e:CompareChartElement){
+//     }
+//     legendRender(e:CompareChartElement){
+//         let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
+//             div.style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//             .classed("legend",true)
+//         e.layout.node(div.node())
+//         div.node().innerHTML=""
+//         div.append("ul").selectAll("li").data(e.data).enter().append("li").append("p").text("hah")
+//     }
+// }
+// export class CanvasRender implements IChartElementRender{
+//       titleRender(e:IChartElement){
+//         let div = d3.select(e.chart.wrapper.node()).append("div")
+//             .style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//         div.append("p").classed(e.data.class, true).text(e.data.value)  
+//     }
+//      axisRender(e:IChartElement,domain,position:string){
+//         let d = d3.select(e.chart.wrapper.node()).append("div")
+//             .style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//     }
+//      chartRender(e:CompareChartElement){
+//     }
+//     legendRender(e:CompareChartElement){
+//     }
+// }
 //# sourceMappingURL=Utils.js.map

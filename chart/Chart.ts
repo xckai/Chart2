@@ -4,7 +4,7 @@ import d3 = require('lib/d3')
 declare var window :any
 import { Measure} from "./Measure"
 import { Evented} from './Evented'
-import { Util,Layout, Style,HTMLRender,CanvasRender,IChartElementRender} from "./Utils"
+import { Util,Layout, Style} from "./Utils"
 import {SVGRender} from "./SvgRender"
 export interface IChartElement {
     id:string
@@ -100,8 +100,10 @@ export abstract class Chart extends Evented {
     checkData(){
 
     }
+    clearDummyDate(){}
     endDraw(){
         let chart=this
+        this.clearDummyDate()
         Util.enableAutoResize(document.getElementById(this.config.appendTo),()=>{
             this.config.height=document.getElementById(this.config.appendTo).clientHeight
             this.config.width = document.getElementById(this.config.appendTo).clientWidth
@@ -128,17 +130,6 @@ export abstract class Chart extends Evented {
             this.calculateLayout()
             this.fire("render")
             this.endDraw()
-        }
-    }
-    getRenderer(s:string):IChartElementRender{
-        if(s==="html"){
-            return new HTMLRender()
-        }
-        if(s==="canvas"){
-            return new CanvasRender()
-        }
-        else{
-            return new SVGRender()
         }
     }
 }

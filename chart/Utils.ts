@@ -2,7 +2,7 @@
 declare var _:any;
 declare var window:any;
 import { IChartElement } from "./Chart"
-import { CompareChartElement } from "./CompareChart"
+import d3= require('lib/d3')
 import { CompareChartMeasure } from "./Measure"
 import {Evented} from "./Evented"
 export module Util{
@@ -42,7 +42,7 @@ export function getStringRect(str:string, cla ?:string,font_size?:number){
         let d= window.document.createElement("div");
         let p = window.document.createElement("span");
         let r ={width:0,height:0};
-         d.style.transform="translate3d(0, 0, 0)";
+        d.style.transform="translate3d(0, 0, 0)";
         d.style.visibility="hidden";
         d.className="getStringRect"
         p.innerHTML= str;
@@ -77,11 +77,25 @@ export function CacheAble(fn:any,keyFn?){
             return cache[_key.apply(null,args)]
         }else{
              console.log("not cached",args)
-
              return cache[_key.apply(null,args)]=fn.apply(null,args)  
         }
     }
 }
+export function curry(f) {
+        var arity = f.length;
+        return function f1() {
+            var args = Array.prototype.slice.call(arguments, 0);
+            if(args.length < arity) {
+                var f2 = function() {
+                    var args2 = Array.prototype.slice.call(arguments, 0); // parameters of returned curry func
+                    return f1.apply(null, args.concat(args2)); // compose the parameters for origin func f
+                }
+                return f2;
+            } else {
+                return f.apply(null, args); //all parameters are provided call the origin function
+            }
+        }
+    }
 function arguments2Array(args){
     let r=[]
     for(let i=0;i<args.length;++i){
@@ -138,76 +152,171 @@ export function enableAutoResize(dom:any,fn){
     }
 }
 export class Style extends Evented{
-    constructor(color ?,stroke ?,fillColor ?,opacity ?,cls?){
+    constructor(stroke ?,fillColor ?,opacity ?,width?,dashArray?){
         super()
-        this._color=color||this._color
-        this._stroke =stroke||this._stroke;
-        this._fillColor =fillColor||this._fillColor
-        this._opacity =opacity||this._opacity
-        this._class=cls
+        this.setStroke(stroke||"black")
+        this.setFillColor(fillColor||"black")
+        this.setOpacity(opacity||1)
+        this.setLineWidth(width||2)
+        this.setDashArray(dashArray||"")
+        // this._stroke =stroke||this._stroke;
+        // this._fillColor =fillColor||this._fillColor
+        // this._opacity =opacity||this._opacity
+        // this._lineWidth=width||this._lineWidth
+        // this._dashArray=dashArray||this._dashArray
     }
-    private _font:any=14
-    _color:string ="black"
-    _stroke:number =1
-    _fillColor:string ="black"
-    _opacity:number =1
-    _lineWidth:number=1
-    _rx:number=2
-    _ry:number=2
-    _visiable=true
-    set font(f:any){
-        if(!isNaN(f)){
-            this._font=f;
+    _get(key?,ns?){
+         if(ns){
+           return _.findWhere(this._d,{name:ns})[key]
         }
-        if(Util.isEndWith(f,"px")){
-            this._font=parseFloat(f);
-        }
-        if(Util.isEndWith(f,"em")||Util.isEndWith(f,"rem")){
-            let font=window.getComputedStyle(document.body).getPropertyValue('font-size')||16
-            this._font=parseFloat(f) * parseFloat(font)
-        }
+        let v="";
+        this._d.forEach(d=>{
+            v=d[key]||v
+        })
+        return v
     }
-    get font(){
-        return this._font
+    _set(k,v,namespace?){
+        let name=namespace||"default"
+        if(_.some(this._d,{name:name})){
+            let obj=_.findWhere(this._d,{name:name})
+            obj[k]=v
+        }else{
+            let obj={name:name}
+            obj[k]=v
+            this._d.push(obj)
+        }
+        this.fire("change")
+        return this
+    }
+    _d:any[]=[]
+    // _temp={}
+    // ctx(s){return s}
+    // private _font:any=14
+    // _stroke:string ="black"
+    // _fillColor:string ="black"
+    // _opacity:number =1
+    // _lineWidth:number=1
+    // _rx:number=2
+    // _ry:number=2
+    // _visiable=true
+    // _dashArray=""
+    // set font(f:any){
+    //     if(!isNaN(f)){
+    //         this._font=f;
+    //     }
+    //     if(Util.isEndWith(f,"px")){
+    //         this._font=parseFloat(f);
+    //     }
+    //     if(Util.isEndWith(f,"em")||Util.isEndWith(f,"rem")){
+    //         let font=window.getComputedStyle(document.body).getPropertyValue('font-size')||16
+    //         this._font=parseFloat(f) * parseFloat(font)
+    //     }
+    //     this.fire("change")
+    // }
+    // get font(){
+    //     return this._font
+    // }
+    equal(s:Style){
+        return this._get("stroke","default")==s._get("stroke","default") && this._get("line-width","default")==s._get("line-width","default") &&this._get("opacity","default")==s._get("opacity","default")
     }
     _fontFamily:string="arial,sans-serif"
     _class:string
-    getColor(){
-        return this._color
-    }
     getStroke(){
-        return this._stroke
+        return this._get("stroke")
     }
     getFillColor(){
-        return this._fillColor
+        return this._get("fill-color")
     }
     getLineWidth(){
-        return this._lineWidth
+        return this._get("line-width")
     }
     getRx(){
-        return this._rx
-    }
-    getRy(){
-        return this._ry
-    }
-    getOpacity(){
-        return this._opacity
+        return this._get("rx")
     }
     getClass(){
-        return this._class
+        return this._get("class")
     }
-    setClass(c){
-        this._class=c
-        return this
+    getRy(){
+        return this._get("ry")
     }
-    setVisiable(v){
-        this._visiable=v
-        return this
+    getOpacity(){
+        return this._get("opacity")
     }
     getVisiable(){
-        return this._visiable
+        return this._get("visiable")
     }
-
+    getDashArray(){
+          return this._get("dash-array")
+    }
+    setFillColor(c,ns?){
+        return this._set("fill-color",c,ns)
+    }
+    setDashArray(d,ns?){
+        return this._set("dash-array",d,ns)
+    }
+    setClass(d,ns?){
+         return this._set("class",d,ns)
+    }
+    setVisiable(d,ns?){
+        return this._set("visiable",d,ns)
+    }
+    setLineWidth(d,ns?){
+        return this._set("line-width",d,ns)
+    }
+    setColor(d,ns?){
+        return this._set("color",d,ns)
+    }
+    setStroke(d,ns?){
+         return this._set("stroke",d,ns)
+    }
+    setOpacity(d,ns?){
+        return this._set("opacity",d,ns)
+    }
+    // setDefaultFillColor(f){
+    //     this._fillColor=f
+    //     this.fire("change")
+    //     return this
+    // }
+    // setDefaultClass(c){
+    //     this._class=c
+    //     return this
+    // }
+    // setDefaultVisiable(v){
+    //     this._visiable=v
+    //     this.fire("change")
+    //     return this
+    // }
+    // setDefaultDashArray(a){
+    //     this._dashArray=a
+    //     this.fire("change")
+    // }
+    // setDefaultLineWidth(d){
+    //     this._lineWidth=d
+    //     this.fire("change")
+    // }
+    // setDefaultStroke(s){
+    //     this._stroke=s
+    //     this.fire("change")
+    // }
+    // setDefaultOpacity(o){
+    //     this._opacity=o
+    //     this.fire("change")
+    // }
+    reset(ns){
+        let nd=[]
+        _.each(this._d,(d)=>{
+            if(d["name"]!=ns){
+                nd.push(d)
+            }
+        })
+        this._d=nd
+        this.fire("change")
+        return this
+    }
+    clone(s:Style){
+        this._d=JSON.parse(JSON.stringify(s._d))
+        this.fire("change")
+    }
 }
 export class Layout extends Evented{
     constructor(render?){
@@ -272,15 +381,8 @@ export class Layout extends Evented{
     }
     
 }
-import d3= require('lib/d3')
-export interface IChartElementRender{
-    titleRender(e:IChartElement)
-    axisRender(e:IChartElement,domain:any,position:string)
-    chartRender(e:CompareChartElement)
-    legendRender(e:CompareChartElement)
-}
 export let pathGen=(xScale,yScale,ds,closed?)=>{
-        if (ds.length < 1) return "M0,0";
+        if (ds.length < 2) return "M0,0";
         var lineString = "";
         var isStartPoint = true;
         for (var i = 0; i < ds.length; ++i) {
@@ -308,61 +410,61 @@ export let pathGen=(xScale,yScale,ds,closed?)=>{
         return lineString;
 }
 
-export class HTMLRender implements IChartElementRender{
-      titleRender(e:IChartElement){
+// export class HTMLRender implements IChartElementRender{
+//       titleRender(e:IChartElement){
         
-        let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
+//         let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
             
-            div.style("position", "absolute")
-            .style("left", e.layout.x() + "px")
-            .style("top", e.layout.y() + "px")
-            .style("height", e.layout.h() + "px")
-            .style("width", e.layout.w() + "px")
-        e.layout.node(div.node())
-        div.node().innerHTML=""
-        div.append("p").classed(e.data.class, true).text(e.data.value)  
-    }
-     axisRender(e:IChartElement,domain,position:string){
+//             div.style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//         e.layout.node(div.node())
+//         div.node().innerHTML=""
+//         div.append("p").classed(e.data.class, true).text(e.data.value)  
+//     }
+//      axisRender(e:IChartElement,domain,position:string){
       
-    }
-    chartRender(e:CompareChartElement){
+//     }
+//     chartRender(e:CompareChartElement){
 
-    }
-    legendRender(e:CompareChartElement){
-        let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
-            div.style("position", "absolute")
-            .style("left", e.layout.x() + "px")
-            .style("top", e.layout.y() + "px")
-            .style("height", e.layout.h() + "px")
-            .style("width", e.layout.w() + "px")
-            .classed("legend",true)
-        e.layout.node(div.node())
-        div.node().innerHTML=""
-        div.append("ul").selectAll("li").data(e.data).enter().append("li").append("p").text("hah")
-    }
-}
-export class CanvasRender implements IChartElementRender{
-      titleRender(e:IChartElement){
-        let div = d3.select(e.chart.wrapper.node()).append("div")
-            .style("position", "absolute")
-            .style("left", e.layout.x() + "px")
-            .style("top", e.layout.y() + "px")
-            .style("height", e.layout.h() + "px")
-            .style("width", e.layout.w() + "px")
-        div.append("p").classed(e.data.class, true).text(e.data.value)  
-    }
-     axisRender(e:IChartElement,domain,position:string){
-        let d = d3.select(e.chart.wrapper.node()).append("div")
-            .style("position", "absolute")
-            .style("left", e.layout.x() + "px")
-            .style("top", e.layout.y() + "px")
-            .style("height", e.layout.h() + "px")
-            .style("width", e.layout.w() + "px")
-    }
-     chartRender(e:CompareChartElement){
+//     }
+//     legendRender(e:CompareChartElement){
+//         let div =e.layout.node()?d3.select(e.layout.node()) :d3.select(e.chart.wrapper.node()).append("div")
+//             div.style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//             .classed("legend",true)
+//         e.layout.node(div.node())
+//         div.node().innerHTML=""
+//         div.append("ul").selectAll("li").data(e.data).enter().append("li").append("p").text("hah")
+//     }
+// }
+// export class CanvasRender implements IChartElementRender{
+//       titleRender(e:IChartElement){
+//         let div = d3.select(e.chart.wrapper.node()).append("div")
+//             .style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//         div.append("p").classed(e.data.class, true).text(e.data.value)  
+//     }
+//      axisRender(e:IChartElement,domain,position:string){
+//         let d = d3.select(e.chart.wrapper.node()).append("div")
+//             .style("position", "absolute")
+//             .style("left", e.layout.x() + "px")
+//             .style("top", e.layout.y() + "px")
+//             .style("height", e.layout.h() + "px")
+//             .style("width", e.layout.w() + "px")
+//     }
+//      chartRender(e:CompareChartElement){
         
-    }
-    legendRender(e:CompareChartElement){
+//     }
+//     legendRender(e:CompareChartElement){
         
-    }
-}
+//     }
+// }

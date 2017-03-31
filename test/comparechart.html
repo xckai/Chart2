@@ -86,11 +86,22 @@
          justify-content:center
     }
     .CompareChart .legend li{
-       width: 100px
+       min-width: 100px;
+        display: block;
+        padding-left: 10px
     }
     .CompareChart .legend p{
-        margin: 0
+        margin: 0 5px
     }
+    .CompareChart .legend li:hover{
+      background-color: gray;
+      color:white;
+    }
+     .CompareChart .hover{
+        stroke: blue;
+        stroke-width: 2px
+    }
+    
 </style>
 
 </html>

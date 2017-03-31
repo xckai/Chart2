@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "lib/underscore"], function (require, exports, d3, Evented_1, Utils_1, SvgRender_1) {
+define(["require", "exports", "lib/d3", "./Evented", "./Utils", "lib/underscore"], function (require, exports, d3, Evented_1, Utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Chart = (function (_super) {
@@ -91,9 +91,11 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
         };
         Chart.prototype.checkData = function () {
         };
+        Chart.prototype.clearDummyDate = function () { };
         Chart.prototype.endDraw = function () {
             var _this = this;
             var chart = this;
+            this.clearDummyDate();
             Utils_1.Util.enableAutoResize(document.getElementById(this.config.appendTo), function () {
                 _this.config.height = document.getElementById(_this.config.appendTo).clientHeight;
                 _this.config.width = document.getElementById(_this.config.appendTo).clientWidth;
@@ -120,17 +122,6 @@ define(["require", "exports", "lib/d3", "./Evented", "./Utils", "./SvgRender", "
                 this.calculateLayout();
                 this.fire("render");
                 this.endDraw();
-            }
-        };
-        Chart.prototype.getRenderer = function (s) {
-            if (s === "html") {
-                return new Utils_1.HTMLRender();
-            }
-            if (s === "canvas") {
-                return new Utils_1.CanvasRender();
-            }
-            else {
-                return new SvgRender_1.SVGRender();
             }
         };
         return Chart;

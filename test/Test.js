@@ -1,4 +1,4 @@
-define(["require", "exports", "../chart/CompareChartLine", "../chart/CompareChartBar", "../chart/CompareLegend"], function (require, exports, CompareChartLine_1, CompareChartBar_1, CompareLegend_1) {
+define(["require", "exports", "../chart/CompareChartLine", "../chart/CompareChartBar", "../chart/CompareLegend", "lib/underscore"], function (require, exports, CompareChartLine_1, CompareChartBar_1, CompareLegend_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Tester;
@@ -46,7 +46,13 @@ define(["require", "exports", "../chart/CompareChartLine", "../chart/CompareChar
                 d[5] = baseNum - 15 - 20 * Math.random();
                 ds.push(d);
             }
-            return ds;
+            var nds = [];
+            ds.forEach(function (d) {
+                if (!_.some(nds, function (nd) { nd == d.x; })) {
+                    nds.push(d);
+                }
+            });
+            return nds;
         }
     })(Tester = exports.Tester || (exports.Tester = {}));
 });

@@ -8,31 +8,22 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./ChartElement", "lib/underscore"], function (require, exports, d3, Evented_1, Chart_1, Utils_1, ChartElement_1) {
+define(["require", "exports", "lib/d3", "./Chart", "./Utils", "./ChartElement", "lib/underscore"], function (require, exports, d3, Chart_1, Utils_1, ChartElement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var CompareChartElement = (function (_super) {
-        __extends(CompareChartElement, _super);
-        function CompareChartElement(id, l, chart, data, visiable, render, ctx) {
-            var _this = _super.call(this) || this;
-            _this.z_index = 1;
-            _this.layout = l;
-            _this.chart = chart;
-            _this.visiable = visiable,
-                _this.render = render;
-            _this.id = id;
-            _this.data = data;
-            _this.ctx = ctx;
-            return _this;
+    var CoverElement = (function (_super) {
+        __extends(CoverElement, _super);
+        function CoverElement() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
-        return CompareChartElement;
-    }(Evented_1.Evented));
-    exports.CompareChartElement = CompareChartElement;
+        CoverElement.prototype.showGuideLine = function () {
+        };
+        return CoverElement;
+    }(ChartElement_1.XAreaEventElement));
     var CompareChart = (function (_super) {
         __extends(CompareChart, _super);
         function CompareChart(cfg) {
             var _this = _super.call(this, cfg) || this;
-            //CanvasElement:ChartElement
             _this.config = {
                 appendTo: "chart",
                 class: "CompareChart",
@@ -109,7 +100,8 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
                 xAxis: new Utils_1.Layout().setPosition("bottom"),
                 yAxis: new Utils_1.Layout().setPosition("left"),
                 y2Axis: new Utils_1.Layout().setPosition("right"),
-                chart: new Utils_1.Layout()
+                chart: new Utils_1.Layout(),
+                event: new Utils_1.Layout()
             };
             _this.styles = {
                 xAxis: new Utils_1.Style().setClass(_this.config.xAxis.class),
@@ -119,7 +111,8 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
                 xTitle: new Utils_1.Style().setClass(_this.config.xTitle.class),
                 yTitle: new Utils_1.Style().setClass(_this.config.yTitle.class),
                 y2Title: new Utils_1.Style().setClass(_this.config.y2Title.class),
-                legend: new Utils_1.Style().setClass(_this.config.legend.class)
+                legend: new Utils_1.Style().setClass(_this.config.legend.class),
+                canvas: new Utils_1.Style()
             };
             _this.measures = [];
             _this.barIndex = {};
@@ -167,6 +160,22 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
             _this.legendElement = new ChartElement_1.LegendElement(_this).setLayout(_this.canvas.legend)
                 .setStyle(_this.styles.legend)
                 .setLegendDataFn(function () { return _this.getMeasures().filter(function (m) { return m.type === "legend"; }); });
+            _this.canvasElement = new ChartElement_1.CompareChartCanvasElement(_this).setLayout(_this.canvas.chart)
+                .setStyle(_this.styles.canvas)
+                .setDataFn(function () { return _this.getMeasures(); });
+            _this.eventElement = new CoverElement(_this).setLayout(_this.canvas.event)
+                .setDataFn(function () {
+                return _this.getMeasures().map(function (m) {
+                    var xScale = _this.getScale(_this.getDomain(_this.getMeasures(), "x"), [0, _this.canvas.chart.getW()]);
+                    var yScale = _this.getScale(_this.getDomain(_this.getMeasures(), "y", true), [0, _this.canvas.chart.getH()]);
+                    var y2Scale = _this.getScale(_this.getDomain(_this.getMeasures(), "y2", true), [0, _this.canvas.chart.getH()]);
+                    _this.ctx("CompareChart", _this);
+                    _this.ctx("chartheight", _this.canvas.chart.getH());
+                    return m.getSymbolizes();
+                }).reduce(function (s1, s2) {
+                    return s1.concat(s2);
+                });
+            });
             return _this;
         }
         CompareChart.prototype.addMeasure = function (nm) {
@@ -179,26 +188,6 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
             }
             this.fire("measure-add", nm);
             return this;
-        };
-        CompareChart.prototype.getElements = function () {
-            var _this = this;
-            var r = [];
-            var svg = this.getRenderer("svg");
-            var html = this.getRenderer("html");
-            //let legendLayout=this.config.legend._position==="right"?this.canvas.rightLegend:this.canvas.bottomLegend
-            r.push(new CompareChartElement("legend", this.canvas.legend, this, this.getMeasures().filter(function (m) { return m.type == "legend"; }), this.config.legend.visiable, function (e) { return html.legendRender(e); }, this.ctx()));
-            r.push(new CompareChartElement("title", this.canvas.title, this, this.config.title, this.config.title.visiable, function (e) { html.titleRender(e); }));
-            r.push(new CompareChartElement("xTitle", this.canvas.xTitle, this, this.config.xTitle, this.config.xTitle.visiable, function (e) { html.titleRender(e); }));
-            r.push(new CompareChartElement("yTitle", this.canvas.yTitle, this, this.config.yTitle, this.config.yTitle.visiable, function (e) { html.titleRender(e); }));
-            r.push(new CompareChartElement("y2Title", this.canvas.y2Title, this, this.config.y2Title, this.config.y2Title.visiable, function (e) { html.titleRender(e); }));
-            r.push(new CompareChartElement("xAxis", this.canvas.xAxis, this, { class: this.ctx("xAxisClass") ? this.ctx("xAxisClass") + " " + this.config.xAxis.class : this.config.xAxis.class,
-                format: this.config.xAxis.format }, this.config.xAxis.visiable, function (e) { svg.axisRender(e, _this.getDomain(_this.getMeasures(), "x"), "bottom"); }, this.ctx()));
-            r.push(new CompareChartElement("yAxis", this.canvas.yAxis, this, { class: this.ctx("yAxisClass") ? this.ctx("yAxisClass") + " " + this.config.yAxis.class : this.config.yAxis.class,
-                format: this.config.yAxis.format }, this.config.yAxis.visiable, function (e) { svg.axisRender(e, _this.getDomain(_this.getMeasures(), "y", true), "left"); }, this.ctx()));
-            r.push(new CompareChartElement("y2Axis", this.canvas.y2Axis, this, { class: this.ctx("y2AxisClass") ? this.ctx("y2AxisClass") + " " + this.config.y2Axis.class : this.config.y2Axis.class,
-                format: this.config.y2Axis.format }, this.config.y2Axis.visiable, function (e) { svg.axisRender(e, _this.getDomain(_this.getMeasures(), "y", true), "right"); }, this.ctx()));
-            r.push(new CompareChartElement("chart", this.canvas.chart, this, this.getMeasures(), true, function (e) { svg.chartRender(e); }));
-            return r.concat(this.elements);
         };
         CompareChart.prototype.getMeasures = function () {
             return this.measures;
@@ -316,6 +305,11 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
             c.y2Title.setH(c.chart.getH());
             c.yTitle.setH(c.chart.getH());
             c.xTitle.setW(c.chart.getW());
+            c.event.setX(c.chart.getX()).setY(c.chart.getY())
+                .setH(c.chart.getH())
+                .setW(c.chart.getW());
+            this.ctx("chart-width", c.chart.getW());
+            this.ctx("chart-height", c.chart.getH());
         };
         CompareChart.prototype.getChartLayout = function () {
             return this.canvas.chart;
@@ -431,11 +425,15 @@ define(["require", "exports", "lib/d3", "./Evented", "./Chart", "./Utils", "./Ch
         };
         CompareChart.prototype.getBarIndex = function (v) {
             if (this.barIndex[v]) {
+                console.log(v, this.barIndex[v] + 1);
                 return this.barIndex[v] += 1;
             }
             else {
                 return this.barIndex[v] = 1;
             }
+        };
+        CompareChart.prototype.clearDummyDate = function () {
+            this.barIndex = {};
         };
         return CompareChart;
     }(Chart_1.Chart));

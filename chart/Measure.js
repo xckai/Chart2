@@ -8,13 +8,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], function (require, exports, Evented_1, Utils_1) {
+define(["require", "exports", "./Evented", "./Utils", "./Symbol", "lib/underscore"], function (require, exports, Evented_1, Utils_1, Symbol_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Measure = (function (_super) {
         __extends(Measure, _super);
         function Measure(id, name, type, ds) {
             var _this = _super.call(this) || this;
+            _this.symbolizes = [];
             _this.style = new Utils_1.Style();
             _this.id = id;
             _this.name = name || id;
@@ -25,7 +26,11 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
         Measure.prototype.pluckDatas = function (type) {
             return _.pluck(this.dataset, type);
         };
-        Measure.prototype.toSymbolies = function () {
+        Measure.prototype.toSymbolies = function (node, x, y) {
+            return this.symbolizes;
+        };
+        Measure.prototype.getSymbolizes = function () {
+            return this.symbolizes;
         };
         Measure.prototype.setID = function (id) {
             if (id != undefined) {
@@ -47,6 +52,8 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
         };
         Measure.prototype.removeSymbolies = function () {
         };
+        Measure.prototype.update = function () {
+        };
         return Measure;
     }(Evented_1.Evented));
     exports.Measure = Measure;
@@ -58,13 +65,23 @@ define(["require", "exports", "./Evented", "./Utils", "lib/underscore"], functio
             _this.ref = ref || _this.ref;
             _this.setData(ds);
             return _this;
+            // this.style.on("change",()=>{
+            //     this.symbolizes.forEach((s:Symbol)=>{
+            //         s.style.clone(this.style)
+            //     })
+            // })
         }
-        CompareChartMeasure.prototype.node = function (n) {
-            if (n) {
-                this._node = n;
-                return this;
-            }
-            return this._node;
+        CompareChartMeasure.prototype.render = function (canvas, xScale, yScale, ctx) {
+            //this.toSymbolies()
+        };
+        CompareChartMeasure.prototype.getStyle = function (d, ds, ctx) {
+            return new Utils_1.Style();
+        };
+        CompareChartMeasure.prototype.toSymbolies = function (node, xScale, yScale, ctx) {
+            return this.getData().map(function (d) {
+                var s = new Symbol_1.Symbol();
+                return s;
+            });
         };
         return CompareChartMeasure;
     }(Measure));

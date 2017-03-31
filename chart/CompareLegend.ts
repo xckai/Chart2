@@ -4,7 +4,8 @@ export class CompareChartLegend extends CompareChartMeasure{
     constructor(id?,name?,ref?,ds?){
         super(id,name,"legend",ref,ds);
     }
-     pluckDatas(type:string):any[]{
+    pluckDatas(type:string):any[]{
        return []
     }
+    
 }

@@ -1,3 +1,5 @@
+   /// <amd-dependency path="lib/underscore">
+declare var _:any;
     import {CompareChartLine} from "../chart/CompareChartLine"
      import {CompareChartBar} from "../chart/CompareChartBar"
      import {CompareChartLegend} from "../chart/CompareLegend"
@@ -44,6 +46,12 @@ export namespace Tester{
             d[5]=baseNum-15-20*Math.random()
             ds.push(d)
         }
-        return ds
+        let nds=[]
+        ds.forEach((d)=>{
+            if(!_.some(nds,(nd)=>{nd==d.x})){
+                nds.push(d)
+            }
+        })
+        return nds
     }
 }

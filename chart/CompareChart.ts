@@ -4,31 +4,31 @@ import d3 = require('lib/d3')
 declare var window :any
 import { CompareChartMeasure} from "./Measure"
 import { Evented} from './Evented'
-import {Chart , IChartElement,IChartConfig}  from "./Chart"
+import {Chart}  from "./Chart"
 import { Util,Layout, Style} from "./Utils"
-import{ChartElement ,AxisElement,TitleElement,LegendElement} from "./ChartElement"
-export class CompareChartElement  extends Evented implements IChartElement{
-    constructor(id:string,l:Layout,chart:CompareChart,data:any,visiable:boolean,render:any,ctx?){
-        super()
-         this.layout=l
-         this.chart=chart
-         this.visiable=visiable,
-         this.render=render
-         this.id=id
-         this.data=data
-         this.ctx=ctx
-    }
-    Parent:any
-    visiable:boolean
-    z_index:number=1
-    id:string
-    chart:CompareChart
-    layout:Layout
-    data:any
-    render:any
-    ctx:any
+import{ChartElement ,AxisElement,TitleElement,LegendElement ,CompareChartCanvasElement,XAreaEventElement,Tooltip} from "./ChartElement"
+// export class CompareChartElement  extends Evented implements IChartElement{
+//     constructor(id:string,l:Layout,chart:CompareChart,data:any,visiable:boolean,render:any,ctx?){
+//         super()
+//          this.layout=l
+//          this.chart=chart
+//          this.visiable=visiable,
+//          this.render=render
+//          this.id=id
+//          this.data=data
+//          this.ctx=ctx
+//     }
+//     Parent:any
+//     visiable:boolean
+//     z_index:number=1
+//     id:string
+//     chart:CompareChart
+//     layout:Layout
+//     data:any
+//     render:any
+//     ctx:any
 
-}
+// }
 interface ICompareChartConfig{
         appendTo:"chart",
         class: "CompareChart",
@@ -83,6 +83,11 @@ interface ICompareChartConfig{
         height: 300
     
 }
+class CoverElement extends XAreaEventElement{
+    showGuideLine(){
+
+    }
+}
 export class CompareChart extends Chart {
     constructor(cfg) {
         super(cfg);
@@ -130,6 +135,24 @@ export class CompareChart extends Chart {
         this.legendElement = new LegendElement(this).setLayout(this.canvas.legend)
                                                         .setStyle(this.styles.legend)
                                                         .setLegendDataFn(()=>this.getMeasures().filter(m=>m.type==="legend"))
+        this.canvasElement = new CompareChartCanvasElement(this).setLayout(this.canvas.chart)
+                                                        .setStyle(this.styles.canvas)
+                                                        .setDataFn(()=>{return this.getMeasures()})
+        this.eventElement = new CoverElement(this).setLayout(this.canvas.event)
+                                                            .setDataFn(()=>{
+                                                                return  this.getMeasures().map((m:CompareChartMeasure)=>{
+                                                                    let xScale=this.getScale(this.getDomain(this.getMeasures(),"x"),[0,this.canvas.chart.getW()])
+                                                                    let yScale=this.getScale(this.getDomain(this.getMeasures(),"y",true),[0,this.canvas.chart.getH()])
+                                                                    let y2Scale=this.getScale(this.getDomain(this.getMeasures(),"y2",true),[0,this.canvas.chart.getH()])
+                                                                    this.ctx("CompareChart",this)
+                                                                    this.ctx("chartheight",this.canvas.chart.getH())
+                                                                    return m.getSymbolizes()
+                                                                }).reduce((s1,s2)=>{
+                                                                    return s1.concat(s2)
+                                                                })
+                                                            })
+        this.toolTip=new Tooltip(this).setLayout(new Layout())
+        this.toolTip.setContent("<p> ToolTip</p>")
     }
     titletElement:ChartElement
     xTitleElement:ChartElement
@@ -139,7 +162,9 @@ export class CompareChart extends Chart {
     yAxisElement:ChartElement
     y2AxisElement:ChartElement
     legendElement:ChartElement
-    //CanvasElement:ChartElement
+    canvasElement:ChartElement
+    eventElement:CoverElement
+    toolTip:Tooltip
     config = {
         appendTo:"chart",
         class: "CompareChart",
@@ -215,10 +240,11 @@ export class CompareChart extends Chart {
         xTitle: new Layout() ,
         yTitle:  new Layout() ,
         y2Title:  new Layout() ,
-        xAxis:  new Layout().setPosition("bottom") ,
+        xAxis:  new Layout().setPosition("bottom"),
         yAxis:  new Layout().setPosition("left"),
         y2Axis:  new Layout().setPosition("right"),
-        chart:  new Layout() 
+        chart:  new Layout(),
+        event:new Layout()
     }
     styles={
         xAxis:  new Style().setClass(this.config.xAxis.class),
@@ -228,7 +254,8 @@ export class CompareChart extends Chart {
         xTitle:new Style().setClass(this.config.xTitle.class),
         yTitle:new Style().setClass(this.config.yTitle.class),
         y2Title:new Style().setClass(this.config.y2Title.class),
-        legend:new Style().setClass(this.config.legend.class)
+        legend:new Style().setClass(this.config.legend.class),
+        canvas:new Style()
     }
     addMeasure(nm: CompareChartMeasure) {
         let i = _.findIndex(this.measures, (m) => (nm.id == m.id)&&(nm.type== m.type))
@@ -239,25 +266,6 @@ export class CompareChart extends Chart {
         }
         this.fire("measure-add", nm)
         return this;
-    }
-    getElements(){
-        let r=[]
-        let svg= this.getRenderer("svg")
-        let html=this.getRenderer("html")
-        //let legendLayout=this.config.legend._position==="right"?this.canvas.rightLegend:this.canvas.bottomLegend
-        r.push(new CompareChartElement("legend",this.canvas.legend,this,this.getMeasures().filter(m=>m.type == "legend"),this.config.legend.visiable,e=>html.legendRender(e),this.ctx()))
-        r.push(new CompareChartElement("title",this.canvas.title,this,this.config.title,this.config.title.visiable,(e)=>{html.titleRender(e)}))
-        r.push(new CompareChartElement("xTitle",this.canvas.xTitle,this,this.config.xTitle,this.config.xTitle.visiable,(e)=>{html.titleRender(e)}))
-        r.push(new CompareChartElement("yTitle",this.canvas.yTitle,this,this.config.yTitle,this.config.yTitle.visiable,(e)=>{html.titleRender(e)}))
-        r.push(new CompareChartElement("y2Title",this.canvas.y2Title,this,this.config.y2Title,this.config.y2Title.visiable,(e)=>{html.titleRender(e)}))
-        r.push(new CompareChartElement("xAxis",this.canvas.xAxis,this,{class:this.ctx("xAxisClass")?this.ctx("xAxisClass")+" "+this.config.xAxis.class:this.config.xAxis.class,
-                                                                            format:this.config.xAxis.format},this.config.xAxis.visiable,(e)=>{svg.axisRender(e,this.getDomain(this.getMeasures(),"x"),"bottom")},this.ctx()))
-        r.push(new CompareChartElement("yAxis",this.canvas.yAxis,this,{class:this.ctx("yAxisClass")?this.ctx("yAxisClass")+" "+this.config.yAxis.class:this.config.yAxis.class,
-                                                                            format:this.config.yAxis.format},this.config.yAxis.visiable,(e)=>{svg.axisRender(e,this.getDomain(this.getMeasures(),"y",true),"left")},this.ctx()))
-        r.push(new CompareChartElement("y2Axis",this.canvas.y2Axis,this,{class:this.ctx("y2AxisClass")?this.ctx("y2AxisClass")+" "+this.config.y2Axis.class:this.config.y2Axis.class,
-                                                                            format:this.config.y2Axis.format},this.config.y2Axis.visiable,(e)=>{svg.axisRender(e,this.getDomain(this.getMeasures(),"y",true),"right")},this.ctx()))
-        r.push(new CompareChartElement("chart",this.canvas.chart,this,this.getMeasures(),true,(e)=>{svg.chartRender(e)}))
-        return r.concat(this.elements)
     }
     getMeasures(): CompareChartMeasure[] {
         return this.measures;
@@ -294,6 +302,7 @@ export class CompareChart extends Chart {
     getScale(domain: any[], range: any[]) {
         return d3.scaleLinear().domain(domain).range(range);
     }
+    
     calculateLayout() {
         let c = this.canvas
         let con = this.config
@@ -379,6 +388,11 @@ export class CompareChart extends Chart {
 
         c.yTitle.setH(c.chart.getH())
         c.xTitle.setW(c.chart.getW())
+        c.event.setX(c.chart.getX()).setY(c.chart.getY())
+                                        .setH(c.chart.getH())
+                                        .setW(c.chart.getW())
+        this.ctx("chart-width",c.chart.getW())
+        this.ctx("chart-height",c.chart.getH())
     }
     getChartLayout() {
         return this.canvas.chart
@@ -493,10 +507,13 @@ export class CompareChart extends Chart {
     barIndex:any={}
     getBarIndex(v){
          if(this.barIndex[v]){
+             console.log(v,this.barIndex[v]+1)
              return this.barIndex[v]+=1
          }else{
             return    this.barIndex[v]=1
          }
-
+    }
+    clearDummyDate(){
+        this.barIndex={}
     }
 }
