@@ -5,7 +5,6 @@ declare var window :any
 import { Measure} from "./Measure"
 import { Evented} from './Evented'
 import { Util,Layout, Style} from "./Utils"
-import {SVGRender} from "./SvgRender"
 export interface IChartElement {
     id:string
     chart:Chart
