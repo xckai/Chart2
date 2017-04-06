@@ -224,6 +224,15 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
                 .style("height", e.layout.getH() + "px")
                 .style("width", e.layout.getW() + "px");
             c.selectAll("*").remove();
+            c.on("mousemove", function () {
+                _this.fire("mousemove", d3.mouse(c.node()));
+            });
+            c.on("click", function () {
+                _this.fire("click", d3.mouse(c.node()));
+            });
+            c.on("mouseout", function () {
+                _this.fire("mouseout", d3.mouse(c.node()));
+            });
             e.layout.setNode(c.node());
             var d = [].concat(this.dataFn());
             this.chart.ctx("CompareChart", this.chart);
@@ -348,5 +357,48 @@ define(["require", "exports", "./Evented", "lib/d3", "lib/underscore"], function
         return CompareChartActiveElement;
     }(ChartElement));
     exports.CompareChartActiveElement = CompareChartActiveElement;
+    var Tooltip = (function (_super) {
+        __extends(Tooltip, _super);
+        function Tooltip(c) {
+            var _this = _super.call(this) || this;
+            _this.setChart(c);
+            c.on("render", _this.render, _this);
+            _this.ctx = c.ctx;
+            return _this;
+        }
+        Tooltip.prototype.render = function () {
+            var c = this.layout.getNode() ? d3.select(this.layout.getNode()) : d3.select(this.chart.wrapper.getNode()).append("div").classed(".tooltipContainer", true);
+            c.style("position", "absolute")
+                .style("left", "0px")
+                .style("top", "0px");
+            c.selectAll("*").remove();
+            this.layout.setNode(c);
+        };
+        Tooltip.prototype.showTooltip = function (p) {
+            d3.select(this.layout.getNode()).select(".tooltip")
+                .style("left", p[0] + "px")
+                .style("top", p[1] + "px");
+            d3.select(this.layout.getNode()).style("display", "visiable");
+        };
+        Tooltip.prototype.hideenTooltip = function () {
+            d3.select(this.layout.getNode()).style("display", "none");
+        };
+        Tooltip.prototype.setContent = function (c) {
+            d3.select(this.layout.getNode()).selectAll("*").remove();
+            d3.select(this.layout.getNode()).append("div").classed("tooltip", true)
+                .append(c);
+        };
+        Tooltip.prototype.setTemplate = function (t) {
+            this._template = t;
+        };
+        Tooltip.prototype.getContent = function (obj) {
+            _.templateSettings = {
+                interpolate: /\{\{(.+?)\}\}/g
+            };
+            return _.template(this._template, obj);
+        };
+        return Tooltip;
+    }(ChartElement));
+    exports.Tooltip = Tooltip;
 });
 //# sourceMappingURL=ChartElement.js.map

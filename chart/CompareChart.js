@@ -176,6 +176,8 @@ define(["require", "exports", "lib/d3", "./Chart", "./Utils", "./ChartElement", 
                     return s1.concat(s2);
                 });
             });
+            _this.toolTip = new ChartElement_1.Tooltip(_this).setLayout(new Utils_1.Layout());
+            _this.toolTip.setContent("<p> ToolTip</p>");
             return _this;
         }
         CompareChart.prototype.addMeasure = function (nm) {
