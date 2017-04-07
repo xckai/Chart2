@@ -1,6 +1,18 @@
-define(["require", "exports", "Chart/Flexable", "Chart/Service", "lib/d3", "lib/underscore"], function (require, exports, Flexable_1, Service_1, d3, underscore) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "Chart/Flexable", "Chart/Service", "lib/d3", "lib/underscore"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var Flexable_1 = require("Chart/Flexable");
+    var Service_1 = require("Chart/Service");
+    var d3 = require("lib/d3");
+    var underscore = require("lib/underscore");
     console.log(underscore);
     var translateStr = Service_1.Service.stringTemplate("translate({x},{y})");
     var svg = d3.select("body").append("svg").attr("height", 200);

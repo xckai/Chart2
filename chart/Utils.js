@@ -8,9 +8,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./Evented", "lib/underscore"], function (require, exports, Evented_1) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lib/underscore", "./Evented"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var Evented_1 = require("./Evented");
     var Util;
     (function (Util) {
         function isEndWith(s, ed) {
@@ -48,6 +57,14 @@ define(["require", "exports", "./Evented", "lib/underscore"], function (require,
             return n;
         }
         Util.min = min;
+        Util.d3Invoke = curry(function (method, obj) {
+            return function (d3Selection) {
+                _.each(obj, function (v, k) {
+                    d3Selection[method](k, v);
+                });
+                return d3Selection;
+            };
+        });
         // var stringCache={cla:null,font_size:0,length:0,r:{width:0,height:0}} 
         function getStringRect(str, cla, font_size) {
             var d = window.document.createElement("div");
@@ -96,7 +113,7 @@ define(["require", "exports", "./Evented", "lib/underscore"], function (require,
         Util.CacheAble = CacheAble;
         function curry(f) {
             var arity = f.length;
-            return function f1() {
+            return function f1(r1, r2, r3) {
                 var args = Array.prototype.slice.call(arguments, 0);
                 if (args.length < arity) {
                     var f2 = function () {

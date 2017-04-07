@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>ResizeAble AutoLayout</title>
-    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.1.css">
+    <link rel="stylesheet" href="./Heatmap.css">
 </head>
 
 <body>
@@ -26,35 +26,22 @@
             appendId:"chart",
             width:800,
             height:800,
+            xFormat:function(d){
+                var t=new Date(d)
+                return t.getHours()+":"+t.getMinutes()
+            },
+            xSort:function(a,b){
+                return new Date(a) - new Date(b)
+            }
         })
        
         var d=[{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:10:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1},
             {"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:10:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1},
             {"SPEED":23.5,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 02:10:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1},{"SPEED":23.1,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:05:00 GMT","TAXI_COUNT":2},{"SPEED":29,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:10:00 GMT","TAXI_COUNT":2},{"SPEED":28.8,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:15:00 GMT","TAXI_COUNT":1},{"SPEED":28.6,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:20:00 GMT","TAXI_COUNT":1},{"SPEED":undefined,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 05:25:00 GMT","TAXI_COUNT":1},{"SPEED":31.5,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 06:05:00 GMT","TAXI_COUNT":1},{"SPEED":26.6,"w:layer":0,"ID":22,"TIMESTAMP":"Tue Feb 21 2017 06:10:00 GMT","TAXI_COUNT":2},{"SPEED":23.5,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:00:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1},{"SPEED":23.1,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:05:00 GMT","TAXI_COUNT":2},{"SPEED":29,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:10:00 GMT","TAXI_COUNT":2},{"SPEED":28.8,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:15:00 GMT","TAXI_COUNT":1},{"SPEED":28.6,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:20:00 GMT","TAXI_COUNT":1},{"SPEED":28.6,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 05:25:00 GMT","TAXI_COUNT":1},{"SPEED":31.5,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 06:05:00 GMT","TAXI_COUNT":1},{"SPEED":26.6,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 06:10:00 GMT","TAXI_COUNT":2},{"SPEED":26,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 06:15:00 GMT","TAXI_COUNT":1},{"SPEED":16.1,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 06:25:00 GMT","TAXI_COUNT":2},{"SPEED":undefined,"w:layer":0,"ID":33,"TIMESTAMP":"Tue Feb 21 2017 06:30:00 GMT","TAXI_COUNT":1}]
-         chart.setData(d)
-         chart.render()
+         chart.setData(d).render()
+
  });
 </script>
-<style>
-    .rotation {
-        transform: rotate(-90deg);
-        text-anchor : end
-    }
-    .yAxis{
-        text-anchor : end;
-    }
-    .getStringRect .rotation{
-        transform: rotate(-90deg)
-    }
-    .dataHover{
-        fill:blue;
-        background: black
-    }
-    .tool-tip-table{
-        background: #ffffff;
-        font-size: 0.7rem;
-        border-radius: 5px;
-    }
-</style>
+
 
 </html>

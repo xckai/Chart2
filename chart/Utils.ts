@@ -37,6 +37,15 @@ export function min (ns:number []){
        n= n == Number.MAX_VALUE?0:n;
        return n;
     }
+export let d3Invoke = curry((method?,obj?)=>{
+    return (d3Selection)=>{
+        _.each(obj,(v,k)=>{
+            d3Selection[method](k,v)
+        })
+        return d3Selection
+    }
+})
+
 // var stringCache={cla:null,font_size:0,length:0,r:{width:0,height:0}} 
 export function getStringRect(str:string, cla ?:string,font_size?:number){
         let d= window.document.createElement("div");
@@ -83,10 +92,10 @@ export function CacheAble(fn:any,keyFn?){
 }
 export function curry(f) {
         var arity = f.length;
-        return function f1() {
+        return function f1(r1?,r2?,r3?) {
             var args = Array.prototype.slice.call(arguments, 0);
             if(args.length < arity) {
-                var f2 = function() {
+                var f2= function() {
                     var args2 = Array.prototype.slice.call(arguments, 0); // parameters of returned curry func
                     return f1.apply(null, args.concat(args2)); // compose the parameters for origin func f
                 }

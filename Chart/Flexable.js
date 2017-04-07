@@ -1,6 +1,16 @@
-define(["require", "exports", "lib/d3", "Chart/Service", "lib/underscore"], function (require, exports, d3, Service_1) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lib/underscore", "lib/d3", "Chart/Service"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var d3 = require("lib/d3");
+    var Service_1 = require("Chart/Service");
     function rectGen(x, y, w, h, r, tl, tr, bl, br) {
         // x: x-coordinate
         // y: y-coordinate

@@ -8,9 +8,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "lib/d3", "./Chart", "./Utils", "./ChartElement", "lib/underscore"], function (require, exports, d3, Chart_1, Utils_1, ChartElement_1) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lib/underscore", "lib/d3", "./Chart", "./Utils", "./ChartElement"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var d3 = require("lib/d3");
+    var Chart_1 = require("./Chart");
+    var Utils_1 = require("./Utils");
+    var ChartElement_1 = require("./ChartElement");
     var CoverElement = (function (_super) {
         __extends(CoverElement, _super);
         function CoverElement() {

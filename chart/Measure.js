@@ -8,9 +8,20 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./Evented", "./Utils", "./Symbol", "lib/underscore"], function (require, exports, Evented_1, Utils_1, Symbol_1) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lib/underscore", "./Evented", "./Utils", "./Symbol"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var Evented_1 = require("./Evented");
+    var Utils_1 = require("./Utils");
+    var Symbol_1 = require("./Symbol");
     var Measure = (function (_super) {
         __extends(Measure, _super);
         function Measure(id, name, type, ds) {

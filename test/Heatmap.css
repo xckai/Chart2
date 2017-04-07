@@ -1,0 +1,32 @@
+    .heatmap .yAxis{
+        text-anchor : start;
+    }
+    .heatmap .xAxis{
+        transform: rotate(90deg);
+        text-anchor :start
+    }
+    .getStringRect .xAxis{
+         transform: rotate(90deg);
+        text-anchor :start
+    }
+    .getStringRect .yAxis{
+        text-anchor : start;
+    }
+     .heatmap .dataHover{
+        fill:white;
+        background: black
+    }
+     .heatmap .dataHover rect{
+        fill:blue;
+    }
+     .heatmap  .tool-tip-table{
+        background: #ffffff;
+        font-size: 0.7rem;
+        border-radius: 5px;
+    }
+    .heatmap .title{
+        font-size: 1.4rem
+    }
+    .getStringRect .title{
+        font-size: 1.4rem
+    }
