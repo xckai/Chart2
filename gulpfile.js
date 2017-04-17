@@ -24,11 +24,12 @@ gulp.task('start', function() {
    
   // })
 });
-var rjs = require("gulp-r");
-gulp.task("buddle",()=>{
-gulp.src("./chart/*.js")
-    .pipe(rjs({
-        "baseUrl": "./"
-    }))
-    .pipe(gulp.dest("dist"));
-})
+var requirejsOptimize = require('gulp-requirejs-optimize');
+ 
+gulp.task('buddle', function () {
+    return gulp.src('chart/KPIPanal.js')
+        .pipe(requirejsOptimize({
+            baseDir:"./"
+        }))
+        .pipe(gulp.dest('dist'));
+});

@@ -65,6 +65,7 @@
             });
             return nds;
         }
+        var add = function (x) { return function (y) { return x + y; }; };
     })(Tester = exports.Tester || (exports.Tester = {}));
 });
 //# sourceMappingURL=Test.js.map

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ResizeAble AutoLayout</title>
+    <link rel="stylesheet" href="./kpi.css">
+      <link rel="stylesheet" href="./comparechart.css">
+</head>
+
+<body>
+    <div id="chart" style="height: 800px;width:800px ">
+    </div>
+    <script src="./kpi.js"></script>
+    <script src="../lib/d3v3.js"></script>
+    <script src="../lib/underscore.js"></script>
+    <script src="../lib/comparechart.js"></script>
+  
+    
+</body>
+<style>
+
+</style>
+<script>
+var kpi=new KPIPanal()
+        kpi.setConfig({
+            left:100,top:10
+        })
+       
+        var d=[{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:10:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:15:00 GMT","TAXI_COUNT":1},{"SPEED":23.5,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:20:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:25:00 GMT","TAXI_COUNT":1},{"SPEED":17.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 02:30:00 GMT","TAXI_COUNT":1},{"SPEED":25.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:05:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:30:00 GMT","TAXI_COUNT":1},{"SPEED":18.6,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:35:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:40:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:45:00 GMT","TAXI_COUNT":1},{"SPEED":25.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 03:50:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:00:00 GMT","TAXI_COUNT":1},{"SPEED":26.8,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:05:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:15:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:20:00 GMT","TAXI_COUNT":1},{"SPEED":33.4,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:25:00 GMT","TAXI_COUNT":1},{"SPEED":11.2,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:30:00 GMT","TAXI_COUNT":2},{"SPEED":11.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:35:00 GMT","TAXI_COUNT":2},{"SPEED":23.9,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:50:00 GMT","TAXI_COUNT":1},{"SPEED":20.7,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 04:55:00 GMT","TAXI_COUNT":2},{"SPEED":10.1,"w:layer":0,"ID":44,"TIMESTAMP":"Tue Feb 21 2017 05:00:00 GMT","TAXI_COUNT":1}]
+         kpi.render().appendTo("#chart")
+         kpi.update({t1:10.01,t2:30.00,t3:40,datas:d})
+         setTimeout(function(){
+             kpi.update({t1:2.11,t2:3.33,t3:2.33,datas:d})
+         },2000)
+
+</script>
+
+
+</html>

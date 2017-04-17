@@ -54,4 +54,5 @@ export namespace Tester{
         })
         return nds
     }
+    let add=x=>y=>x+y
 }
