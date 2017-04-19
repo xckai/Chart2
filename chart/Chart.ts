@@ -1,6 +1,6 @@
 /// <amd-dependency path="lib/underscore">
 declare var _: any;
-import d3 = require('lib/d3')
+import d3 = require('../lib/d3')
 declare var window :any
 import { Measure} from "./Measure"
 import { Evented} from './Evented'

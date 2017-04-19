@@ -1,17 +1,6 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/underscore", "../chart/CompareChartLine", "../chart/CompareChartBar", "../chart/CompareLegend"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "../chart/CompareChartLine", "../chart/CompareChartBar", "../chart/CompareLegend", "lib/underscore"], function (require, exports, CompareChartLine_1, CompareChartBar_1, CompareLegend_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var CompareChartLine_1 = require("../chart/CompareChartLine");
-    var CompareChartBar_1 = require("../chart/CompareChartBar");
-    var CompareLegend_1 = require("../chart/CompareLegend");
     var Tester;
     (function (Tester) {
         function getLine() {

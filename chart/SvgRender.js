@@ -1,15 +1,6 @@
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/underscore", "lib/d3"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "lib/d3", "lib/underscore"], function (require, exports, d3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var d3 = require("lib/d3");
     function lineRender() {
         var l = this;
         if (!l.node) {

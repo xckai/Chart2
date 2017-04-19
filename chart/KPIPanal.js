@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/d3"], factory);
+        define(["require", "exports", "lib/underscore", "lib/d3"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,13 +12,13 @@
     var d3 = require("lib/d3");
     var KPIPanal = (function () {
         function KPIPanal() {
-            this._chart = ChartManager.createCompareChart({
-                "width": 400,
-                "height": 230,
-                title: "",
-                xType: "TimeSeries",
-                showLegend: false
-            });
+            // _chart=ChartManager.createCompareChart({
+            //         "width": 400,
+            //         "height": 230,
+            //         title: "",
+            //         xType: "TimeSeries",
+            //         showLegend: false
+            //     })
             this._data = {};
         }
         KPIPanal.prototype.appendTo = function (s) {
@@ -46,7 +46,7 @@
                 t3.append("xhtml:text").text(this._config.label2 || "KPI-3");
                 t3.append("xhtml:text").classed("value", true);
                 this._data["chartId"] = _.uniqueId("chart");
-                this._chart.appendTo(this._data["chartId"]);
+                // this._chart.appendTo(this._data["chartId"])
                 contariner.append("xhtml:div").classed("chart", true).attr("id", this._data["chartId"]);
                 this._node = contariner.node();
             }

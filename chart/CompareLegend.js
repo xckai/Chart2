@@ -8,18 +8,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Measure"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "./Measure"], function (require, exports, Measure_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Measure_1 = require("./Measure");
     var CompareChartLegend = (function (_super) {
         __extends(CompareChartLegend, _super);
         function CompareChartLegend(id, name, ref, ds) {

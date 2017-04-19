@@ -8,20 +8,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/underscore", "lib/d3", "./Evented", "./Utils"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "../lib/d3", "./Evented", "./Utils", "lib/underscore"], function (require, exports, d3, Evented_1, Utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var d3 = require("lib/d3");
-    var Evented_1 = require("./Evented");
-    var Utils_1 = require("./Utils");
     var Chart = (function (_super) {
         __extends(Chart, _super);
         function Chart(cfg) {

@@ -6,6 +6,8 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/*.map":true,
-        "**/chart/**/*.js":true
+        "**/chart/*.js":true
+
+
   }
 }

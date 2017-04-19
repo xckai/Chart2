@@ -1,0 +1,180 @@
+/* Style the tab */
+.kpipanal {
+  width: 400px;
+  height: 300px;
+  padding: 5px;
+  background: #f0f0f0;
+}
+.kpipanal .tabs {
+  display: flex;
+  overflow: hidden;
+  border-bottom: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+.kpipanal .tabs .kpi {
+  display: flex;
+  width: 33%;
+  font-size: 1.2rem;
+  color: grey;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  transition: 0.3s;
+}
+.kpipanal .tabs .kpi text {
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.kpipanal .tabs .kpi .value {
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+}
+.kpipanal .tabs .kpi.active {
+  background-color: #ccc;
+}
+.kpipanal .tabs .kpi.active text {
+  color: black;
+}
+.kpipanal .tabs .kpi:hover {
+  background-color: #ddd;
+}
+.kpipanal .charts .chart {
+  -webkit-animation: fadeEffect 1s;
+  animation: fadeEffect 1s;
+  /* Fading effect takes 1 second */
+}
+@-webkit-keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.notextselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+.CompareChart {
+  background-color: #f1f1f1;
+  color: gray;
+  font-size: 14px;
+}
+.CompareChart .CompareChart-axis {
+  font-size: 11.2px;
+  color: gray;
+}
+.CompareChart .CompareChart-axis .tick line,
+.CompareChart .CompareChart-axis path {
+  fill: none;
+  stroke: gray;
+}
+.CompareChart .CompareChart-axis text {
+  fill: gray;
+}
+.CompareChart .CompareChart-title-Container {
+  font-size: 25.2px;
+}
+.CompareChart .CompareChart-title-Container text {
+  fill: gray;
+}
+.CompareChart .CompareChart-TitleBar text {
+  fill: gray;
+}
+.CompareChart .CompareChart-ytickline {
+  stroke-width: 1px;
+  stroke-dasharray: 2, 2;
+  stroke: gray;
+  opacity: 0.5;
+}
+.CompareChart .CompareChart-guideline {
+  stroke-width: 1px;
+  stroke-dasharray: 2, 2;
+  stroke: gray;
+  fill: gray;
+}
+.CompareChart .CompareChart-boxplot line {
+  stroke: gray;
+}
+.CompareChart .datamousehover {
+  stroke: #ffffff;
+  stroke-width: 1px;
+}
+.CompareChart .compareChartNotSelected {
+  opacity: 0.2;
+}
+.CompareChart-area {
+  opacity: 0.2;
+}
+.CompareChart-hintdiv {
+  display: flex;
+  background-color: #f1f1f1;
+  align-items: center;
+  justify-content: center;
+}
+.CompareChart-hint {
+  font-size: 25.2px;
+}
+.legendGroup .legend-textarea {
+  overflow: hidden;
+}
+.legendGroup .legendNotSelected {
+  opacity: 0.2 !important;
+}
+.legendGroup .legendmouseover {
+  font-size: 16.8px;
+}
+.scrollContainer {
+  fill: #ffffff;
+  opacity: 0.6;
+}
+.scrollBackground {
+  fill: #ccc;
+}
+.Chart-Tooltip-1 .tool-tip-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: #f1f1f1;
+  empty-cells: show;
+  -webkit-box-shadow: 7px 7px 12px -9px #777777;
+  -moz-box-shadow: 7px 7px 12px -9px #777777;
+  box-shadow: 7px 7px 12px -9px #777777;
+  opacity: 0.9;
+}
+.Chart-Tooltip-1 .tool-tip-table th {
+  background-color: #ccc;
+  font-size: 16px;
+  padding: 2px 5px;
+  text-align: center;
+  color: gray;
+}
+.Chart-Tooltip-1 .tool-tip-table tr {
+  border: 1px solid #CCC;
+  color: gray;
+}
+.Chart-Tooltip-1 .tool-tip-table td {
+  font-size: 13px;
+  padding: 3px 6px;
+  background-color: #f1f1f1;
+  border-left: 1px dotted #999;
+}
+.Chart-Tooltip-1 .tool-tip-table td > span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+}

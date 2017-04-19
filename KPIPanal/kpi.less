@@ -1,0 +1,215 @@
+/* Style the tab */
+
+.kpipanal {
+    width: 400px;
+    height: 300px;
+    padding: 5px;
+    background: rgba(240, 240, 240, 1);
+    .tabs {
+        display: flex;
+        overflow: hidden;
+        border-bottom: 1px solid #ccc;
+        background-color: #f1f1f1;
+        .kpi{
+            display: flex;
+            width: 33%;
+            font-size: 1.2rem;
+            color: grey;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            transition: 0.3s;
+            // button {
+            //     width: 90%;
+            //     background-color: inherit;
+            //     float: left;
+            //     border: none;
+            //     outline: none;
+            //     cursor: pointer;
+            //     padding: 5px;
+            //     transition: 0.3s;
+            //     border-radius: 3px;
+            //     }
+            // button:hover {
+            //     background-color: #ddd;
+            // }
+            // button.active {
+            //     background-color: #ccc;
+            // }
+            text {
+                width: 100%;
+                text-align: center;
+                font-size: 0.9rem
+            }
+            .value{
+                  width: 100%;
+                text-align: center;
+                font-size: 2rem
+            }
+        }
+        .kpi.active {
+                background-color: #ccc;
+                text{
+                    color:black
+                }
+        }
+        .kpi:hover {
+                background-color: #ddd;
+         }
+       
+    }
+    .charts{
+        .chart {
+            -webkit-animation: fadeEffect 1s;
+            animation: fadeEffect 1s; /* Fading effect takes 1 second */
+        }
+                @-webkit-keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+    }
+
+}
+
+
+@basebackground: #f1f1f1;
+@deepbackground: #ccc;
+@lightbackground:#ffffff;
+@textcolor: gray;
+@axiscolor: gray;
+@datamousehover: #ffffff;
+@mainfontsize: 14px;
+@smallfont: @mainfontsize* 0.8;
+@bigfont: @mainfontsize* 1.8;
+
+.notextselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+.CompareChart {
+    background-color: @basebackground;
+    color: @textcolor;
+    font-size: @mainfontsize;
+    ///chart axis color
+    .CompareChart-axis {
+        font-size: @smallfont;
+        color: @textcolor;
+        .tick line,
+        path {
+            fill: none;
+            stroke: @axiscolor;
+        }
+        text {
+            fill: @textcolor;
+        }
+    }
+    .CompareChart-title-Container{
+        text{
+            fill: @textcolor;
+        }
+        font-size: @bigfont;
+    }
+    .CompareChart-TitleBar{
+        text{
+            fill:@textcolor;
+        }
+    }
+    .CompareChart-ytickline {
+        stroke-width: 1px;
+        stroke-dasharray: 2, 2;
+        stroke: @axiscolor;
+        opacity: 0.5;
+    }
+    .CompareChart-guideline {
+        stroke-width: 1px;
+        stroke-dasharray: 2, 2;
+        stroke: @axiscolor;
+        fill: @axiscolor;
+    }
+    .CompareChart-boxplot{
+        line {stroke:@textcolor}
+    }
+    .datamousehover {
+        stroke: @datamousehover;
+        stroke-width: 1px;
+    }
+    .compareChartNotSelected {
+        opacity: 0.2
+    }
+
+    
+}
+.CompareChart-area{
+    opacity: 0.2
+}
+.CompareChart-hintdiv{
+    display: flex;
+    background-color: @basebackground;
+    align-items: center;
+    justify-content: center;
+}
+.CompareChart-hint{
+    font-size:@bigfont;
+}
+.legendGroup{
+    .legend-textarea{
+        overflow: hidden;
+    }
+    .legendNotSelected {
+        opacity: 0.2 !important;
+    }
+    .legendmouseover {
+        font-size: @mainfontsize*1.2
+        
+    }
+}
+.scrollContainer{
+    fill: @lightbackground;
+    opacity: 0.6
+}
+.scrollBackground{
+    fill:@deepbackground;
+}
+.Chart-Tooltip-1 .tool-tip-table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        background-color: @basebackground;
+        empty-cells: show;
+        -webkit-box-shadow: 7px 7px 12px -9px rgb(119, 119, 119);
+        -moz-box-shadow: 7px 7px 12px -9px rgb(119, 119, 119);
+        box-shadow: 7px 7px 12px -9px rgb(119, 119, 119);
+        opacity: 0.9;
+        th {
+            background-color: @deepbackground;
+            ;
+            font-size: 16px;
+            padding: 2px 5px;
+            text-align: center;
+            color: @textcolor;
+        }
+        tr {
+            border: 1px solid #CCC;
+            color: @textcolor;
+        }
+        td {
+            font-size: 13px;
+            padding: 3px 6px;
+            background-color: @basebackground;
+            border-left: 1px dotted #999;
+        }
+        td>span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 6px;
+        }
+    }

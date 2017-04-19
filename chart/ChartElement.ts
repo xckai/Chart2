@@ -2,7 +2,7 @@
 declare var _:any;
 import { Evented} from './Evented'
 import {Chart} from "./Chart"
-import d3= require('lib/d3')
+import d3= require('../lib/d3')
 import {CompareChart} from "./CompareChart"
 import {CompareChartMeasure,Measure} from "./Measure"
 import { Util,Layout, Style} from "./Utils"

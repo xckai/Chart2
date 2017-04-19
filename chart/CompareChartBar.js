@@ -8,22 +8,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "lib/underscore", "lib/d3", "./Utils", "./Measure", "./Symbol", "./SvgRender"], factory);
-    }
-})(function (require, exports) {
+define(["require", "exports", "lib/d3", "./Utils", "./Measure", "./Symbol", "./SvgRender", "lib/underscore"], function (require, exports, d3, Utils_1, Measure_1, Symbol_1, SvgRender_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var d3 = require("lib/d3");
-    var Utils_1 = require("./Utils");
-    var Measure_1 = require("./Measure");
-    var Symbol_1 = require("./Symbol");
-    var SvgRender_1 = require("./SvgRender");
     var CompareChartBar = (function (_super) {
         __extends(CompareChartBar, _super);
         function CompareChartBar(id, name, ref, ds) {

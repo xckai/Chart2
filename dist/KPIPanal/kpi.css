@@ -1,0 +1,65 @@
+/* Style the tab */
+.kpipanal {
+  width: 400px;
+  height: 300px;
+  padding: 5px;
+  background: #f0f0f0;
+}
+.kpipanal .tabs {
+  display: flex;
+  overflow: hidden;
+  border-bottom: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+.kpipanal .tabs .kpi {
+  display: flex;
+  width: 33%;
+  font-size: 1.2rem;
+  color: grey;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.kpipanal .tabs .kpi button {
+  width: 90%;
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: 0.3s;
+  border-radius: 3px;
+}
+.kpipanal .tabs .kpi button:hover {
+  background-color: #ddd;
+}
+.kpipanal .tabs .kpi button.active {
+  background-color: #ccc;
+}
+.kpipanal .tabs .kpi text {
+  width: 100%;
+  text-align: center;
+  color: green;
+  font-size: 2rem;
+}
+.kpipanal .charts .chart {
+  -webkit-animation: fadeEffect 1s;
+  animation: fadeEffect 1s;
+  /* Fading effect takes 1 second */
+}
+@-webkit-keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
